@@ -134,4 +134,8 @@ class Graph: GraphInterface {
 
     val size: Int get() = this.data.size
 
+    override val selectInterface:Sequence<LanguageItem> get() = sequence {
+        // TODO: implement!
+    }
+
 }

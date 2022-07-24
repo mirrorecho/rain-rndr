@@ -21,6 +21,7 @@ interface GraphInterface {
 
     fun delete(key: String)
 
+    val selectInterface:Sequence<LanguageItem>
 
 }
 
