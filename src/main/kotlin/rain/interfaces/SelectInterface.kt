@@ -8,7 +8,11 @@ interface SelectInterface {
 
     val label: String?
 
+    val keys: List<String>?
+
     val properties: Map<String, Any>
+
+    val selectFrom: SelectInterface?
 
     fun asSequence(): Sequence<LanguageItem> = sequence {
         yieldAll(this@SelectInterface.graph.selectInterface)
@@ -25,5 +29,10 @@ interface SelectInterface {
     fun contains(key: String): Boolean = this.indexOfFirst(key) > -1
 
     val first: LanguageItem get() = this.asSequence().first()
+
+    fun getItem(key: String) {throw NotImplementedError()}
+
+    // same as implementing __call__ method in python... cool
+    operator fun invoke(label:String, keys:List<String>, properties:Map<String,Any>)
 
 }
