@@ -21,7 +21,7 @@ interface GraphableItem {
     // TODO - better as Mutable or Immutable??
     val properties: MutableMap<String, Any>
 
-    fun anyPropertyMatches(matchProperties: MutableMap<String, Any>): Boolean {
+    fun anyPropertyMatches(matchProperties: Map<String, Any>): Boolean {
         return matchProperties.asIterable().indexOfFirst {
             // TODO is this the fastest implementation...? maybe another indexOfFirst instead?
             this.properties.contains(it.key) && this.properties[it.key] == it.value

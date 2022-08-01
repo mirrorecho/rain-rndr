@@ -1,33 +1,33 @@
 package rain.language
 
-import rain.interfaces.GraphableItem
+import rain.interfaces.*
 
 abstract class Item(
     override val key:String = rain.utils.autoKey(),
-    properties: Map<String, Any> = mapOf()
-): GraphableItem {
+    properties: Map<String, Any> = mapOf(),
+    override val context: ContextInterface = LocalContext
+): LanguageItem {
 
-//    companion object {
-//        fun make(key: String = rain.utils.autoKey()): Item {
-//            return Item(key)
-//        }
+//    abstract companion object {
+//        val label: LabelInterface
+////        fun make(key: String = rain.utils.autoKey()): Item {
+////            return Item(key)
+////        }
 //    }
 
     override val properties = properties.toMutableMap()
 
-    // TODO include parent classes in label list
-    override val labels: List<String> get() = listOf(this.primaryLabel)
+    override fun save() {}
 
-    override val primaryLabel: String get() = this::class.simpleName ?: ""
+    override fun read() {}
 
-    abstract fun save()
+    override fun delete() {}
 
-    abstract fun read()
+    override fun mergeMe() {}
 
-    abstract fun delete()
+    override fun deleteMe() {}
 
-    abstract fun mergeMe()
 
-    abstract fun deleteMe()
+
 
 }

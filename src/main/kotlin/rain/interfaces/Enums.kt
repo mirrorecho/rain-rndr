@@ -1,6 +1,8 @@
 package rain.interfaces
 
-enum class SelectDirection {
-    R_N,
-    N_R,
+enum class SelectDirection(val shortForm: String) {
+    RIGHT("->"),
+    LEFT("<-"),
+    RIGHT_NODE("->()"),
+    LEFT_NODE("<-()")
 }

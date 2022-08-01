@@ -1,13 +1,16 @@
 package rain.graph
 
+import kotlinx.coroutines.yield
 import rain.interfaces.*
 
 class Graph: GraphInterface {
+    // TODO: rename to keyIndex
     private val data: MutableMap<String, GraphItem> = mutableMapOf()
     // TODO maybe ... implement nodes and relationships as separate maps?
     // that way could handle getting either by key without downcasting
 
-    private val typeIndex: MutableMap<String, MutableMap<String, GraphableItem>> = mutableMapOf()
+    // TODO: labelIndex would be a better name
+    private val typeIndex: MutableMap<String, MutableMap<String, GraphItem>> = mutableMapOf()
 
 
     override fun contains(key: String): Boolean = this.data.contains(key)
@@ -134,8 +137,50 @@ class Graph: GraphInterface {
 
     val size: Int get() = this.data.size
 
-    override val selectInterface:Sequence<LanguageItem> get() = sequence {
-        // TODO: implement!
+    override fun <T: LanguageItem>selectItems(select: SelectInterface):Sequence<T> = sequence {
+//        yield( )
+    }
+
+    private fun selectLocalItems(select:SelectInterface):Sequence<GraphItem> {
+        var mySequence: Sequence<GraphItem>
+
+        if (select.selectFrom != null) {
+            val fromSequence = selectLocalItems(select.selectFrom!!)
+            mySequence = when (select.direction) {
+                SelectDirection.RIGHT -> sequence {
+                    fromSequence.forEach { n ->
+                        (n as GraphNode).sourcesFor.forEach { yield(it.value) }
+                    }
+                }
+                SelectDirection.LEFT ->  sequence {
+                    fromSequence.forEach { n ->
+                        (n as GraphNode).targetsFor.forEach { yield(it.value) }
+                    }
+                }
+                SelectDirection.RIGHT_NODE -> sequence { fromSequence.forEach { r -> (r as GraphRelationship).target } }
+                SelectDirection.LEFT_NODE -> sequence { fromSequence.forEach { r -> (r as GraphRelationship).source } }
+                else -> sequenceOf()
+            }
+            // WARNING: this implementation differs from the key select
+            // above for the original select ... it's purely a filter ... won't re-order or duplicate items
+            if (!select.keys.isNullOrEmpty()) mySequence = mySequence.filter { select.keys!!.contains(it.key) }
+
+            if (!select.label.isNullOrBlank()) mySequence = mySequence.filter { it.labels.contains(select.label!!) }
+
+        } else {
+            val myMap = if (select.label.isNullOrBlank()) data else typeIndex[select.label].orEmpty()
+
+            mySequence = if (!select.keys.isNullOrEmpty() )
+                select.keys?.asSequence().orEmpty().mapNotNull { k-> myMap[k] }
+            else
+                myMap.asSequence().map {it. value }
+        }
+        if (!select.properties.isNullOrEmpty()) mySequence = mySequence.filter { it.anyPropertyMatches(select.properties!!) }
+    return mySequence
+    }
+
+    fun testMe(){
+//        this.selectItems()
     }
 
 }

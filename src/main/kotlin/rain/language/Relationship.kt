@@ -2,14 +2,13 @@ package rain.language
 
 import rain.interfaces.*
 
-class Relationship(
-    override val key:String = rain.utils.autoKey(),
+open class Relationship(
+    key:String = rain.utils.autoKey(),
     override val source: Node,
     override val target: Node,
-    properties: Map<String, Any> = mapOf()
-): GraphableRelationship, LanguageItem {
-
-    override val properties = properties.toMutableMap()
+    properties: Map<String, Any> = mapOf(),
+    context:ContextInterface = LocalContext,
+): GraphableRelationship, Item(key, properties, context) {
 
     val relationshipType: String get() = this::class.simpleName ?: ""
 

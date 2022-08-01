@@ -1,9 +1,15 @@
 package rain.interfaces
 
 interface ContextInterface {
-    abstract fun graph(): GraphInterface
+    val graph: GraphInterface
 
-    abstract fun initEmptyGraph() // TODO: add arguments
+
+    // note, with Kotlin generics and class values, no need for initEmptyGraph and such nonsense
+    // as in python implementation
+
+    fun registerLabel(label:LabelInterface)
+
+    fun get(labelName:String): LabelInterface?
 
 }
 
