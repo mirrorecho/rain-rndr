@@ -20,13 +20,13 @@ interface SelectInterface {
 
     val direction: SelectDirection?
 
+    val cachedItems: List<LanguageItem>
+
     fun asSequence(): Sequence<LanguageItem> = sequence {
         yieldAll(this@SelectInterface.graph.selectItems(this@SelectInterface ))
     }
 
-    fun <T:LanguageItem>asTypedSequence(): Sequence<T> = sequence {
-        yield( this@SelectInterface.first as T )
-    }
+    fun <T:LanguageItem>asTypedSequence(): Sequence<T> = asSequence().map {it as T}
 
 
     // TODO maybe: could use for more general implementation

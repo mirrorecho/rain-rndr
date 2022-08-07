@@ -2,29 +2,8 @@ import org.openrndr.application
 import rain.*
 import rain.graph.Graph
 import rain.interfaces.*
-import rain.language.FancyNode
-import rain.language.Label
-import rain.language.LocalContext
+import rain.language.*
 
-class FancyNode2(
-    key:String = rain.utils.autoKey(),
-    properties: Map<String, Any> = mapOf(),
-    context:ContextInterface = LocalContext,
-):FancyNode(key, properties, context) {
-
-    companion object {
-        val label: Label<FancyNode2> = Label(
-            factory = {k,p,c -> FancyNode2(k,p,c)},
-            labels = listOf("FancyNode2", "FancyNode"),
-            context = LocalContext
-        )
-//        abstract val label: LabelInterface< Item >
-//        fun make(key: String = rain.utils.autoKey()): Item {
-//            return Item(key)
-//        }
-    }
-
-}
 
 fun yoFancy(li:LanguageItem) {
     println(li::class.simpleName)
@@ -32,19 +11,35 @@ fun yoFancy(li:LanguageItem) {
 
 
 fun main() {
-    var graph = Graph()
-//    var fn2 = FancyNode2()
-    println(LocalContext.get("FancyNode2"))
-//    var
-//    var fn2 = LocalContext.make<FancyNode2>("FancyNode2", "NODEFN123")
 
-//    var l = Label<FancyNode>(
-//        { o1, er, df
-//            return FancyNode()
-//        }
-//    )
+    LocalContext.registerLabel(FancyNode.label)
+    LocalContext.registerLabel(Relationship.label)
 
-    println(graph)
+//    var f = LocalContext.make<FancyNode>("FancyNode", "NODEFN123", mapOf("yo" to "MAMA"))
+
+    val fn = FancyNode("NODE_FN", mapOf("yo" to "MAMA"))
+    fn.createMe()
+
+    val fn2 = FancyNode("NODE_FN2", mapOf("yo" to "YOYO"))
+    fn2.createMe()
+
+    val fn3 = FancyNode("NODE_FN3", mapOf("yo" to "YOYO"))
+    fn3.createMe()
+
+    val rel = Relationship(key="REL1", source_key="NODE_FN", target_key="NODE_FN2")
+//    println(rel.source.key)
+    rel.createMe()
+
+    val fn_a = FancyNode("NODE_FN", )
+    fn_a.read()
+
+//    val seq = Select(label="FancyNode", properties = mapOf("yo" to "YOYO"), )
+//    seq.asTypedSequence<FancyNode>().forEach { println(it.key) }
+    println("-----------------------------------------------------------")
+    fn.r(SelectDirection.RIGHT).asSequence().forEach {println(it.key) }
+    println("-----------------------------------------------------------")
+    fn2.r(SelectDirection.LEFT).n().asSequence().forEach {println(it.key) }
+
 //    yoFancy(fn2)
     println("-----------------------------------------------------------")
 

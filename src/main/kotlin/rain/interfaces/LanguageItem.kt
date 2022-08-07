@@ -2,23 +2,25 @@ package rain.interfaces
 
 interface LanguageItem: GraphableItem {
 
-    // TODO include parent classes in label list
-    override val labels: List<String> get() = listOf(this.primaryLabel)
+    val label: LabelInterface
 
-    override val primaryLabel: String get() = this::class.simpleName ?: ""
+    // TODO include parent classes in label list
+    override val labels: List<String> get() = this.label.labels
+
+    override val primaryLabel: String get() = this.label.primary
 
     val context: ContextInterface
 
     val graph: GraphInterface get() = this.context.graph
 
-    abstract fun save()
+    fun save(): GraphableItem
 
-    abstract fun read()
+    fun read(): GraphableItem
 
-    abstract fun delete()
+    fun delete()
 
-    abstract fun mergeMe()
+    fun mergeMe(): GraphableItem
 
-    abstract fun deleteMe()
+    fun createMe(): GraphableItem
 
 }

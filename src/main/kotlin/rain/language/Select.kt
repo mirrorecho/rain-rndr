@@ -13,18 +13,19 @@ open class Select(
 
     override fun get(key:String) {throw NotImplementedError()}
 
+    // TODO: yay, caching! Make use of this!
+    override val cachedItems: List<LanguageItem> by lazy { asSequence().toList() }
+
     override operator fun invoke(label:String?, keys:List<String>?, properties:Map<String,Any>?): Select {
         // TODO: should direction be set to this.direction? (warrants more thought and testing)
         return Select(context=this.context, label=label, keys=keys, properties=properties, selectFrom=this)
     }
 
-    // TODO any way to avoid this duplicative implementation with default Type
-    open fun r(direction:SelectDirection, label:String?, keys:List<String>?, properties:Map<String,Any>?):TargetedRelationshipSelect{
+    open fun r(direction:SelectDirection, label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null):TargetedRelationshipSelect{
         return TargetedRelationshipSelect(context=this.context, label=label, keys=keys, properties=properties, selectFrom=this, direction=direction)
     }
 
-     // TODO ditto, any way to avoid this duplicative implementation with default Type
-    open fun n(label:String?, keys:List<String>?, properties:Map<String,Any>?):Select {
+    open fun n(label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null):Select {
         throw NotImplementedError()
     }
 }
@@ -45,7 +46,13 @@ class TargetedRelationshipSelect(
     }
 
     override fun n(label:String?, keys:List<String>?, properties:Map<String,Any>?):Select {
-        return Select(context=this.context, label=label, keys=keys, properties=properties, selectFrom=this)
+        println(this.direction)
+        return Select(context=this.context, label=label, keys=keys, properties=properties, selectFrom=this,
+            direction = when (this.direction) {
+                SelectDirection.RIGHT -> SelectDirection.RIGHT_NODE
+                SelectDirection.LEFT -> SelectDirection.LEFT_NODE
+                else -> null
+            })
     }
 
 }

@@ -18,7 +18,6 @@ interface GraphableItem {
 
     val primaryLabel: String
 
-    // TODO - better as Mutable or Immutable??
     val properties: MutableMap<String, Any>
 
     fun anyPropertyMatches(matchProperties: Map<String, Any>): Boolean {

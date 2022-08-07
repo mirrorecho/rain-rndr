@@ -2,6 +2,7 @@ package rain.graph
 
 import kotlinx.coroutines.yield
 import rain.interfaces.*
+import rain.language.LocalContext
 
 class Graph: GraphInterface {
     // TODO: rename to keyIndex
@@ -29,6 +30,7 @@ class Graph: GraphInterface {
     }
 
     // TODO: combine with something that returns the items to avoid redundant lookups, such as checkItem below
+    // TODO: also, make private?
     internal fun checkKey(key:String, exists:Boolean = true) {
         if (this.data.contains(key) != exists)
             throw Exception(key + if (exists) "does not exist!" else " already exists!")
@@ -39,11 +41,11 @@ class Graph: GraphInterface {
 //            throw Exception(key + if (exists) "does not exist!" else " already exists!")
 //    }
 
-    private fun addLabelIndex(label:String, graphItem: GraphableItem) {
-        this.typeIndex.getOrPut(label, {mutableMapOf()})[graphItem.key] = graphItem
+    private fun addLabelIndex(label:String, graphItem: GraphItem) {
+        this.typeIndex.getOrPut(label) { mutableMapOf() } [graphItem.key] = graphItem
     }
 
-    internal fun discardLabelIndex(label:String, graphItem: GraphableItem) {
+    internal fun discardLabelIndex(label:String, graphItem: GraphItem) {
         this.typeIndex[label]?.remove(graphItem.key)
     }
 
@@ -60,8 +62,8 @@ class Graph: GraphInterface {
         this.checkKey(sourceKey)
         this.checkKey(targetKey)
 
-        var source = this.getNode(key)
-        var target = this.getNode(key)
+        var source = this.getNode(sourceKey)
+        var target = this.getNode(targetKey)
 
         var relationship = GraphRelationship(key, relationshipType,
             source, target, properties)
@@ -138,7 +140,12 @@ class Graph: GraphInterface {
     val size: Int get() = this.data.size
 
     override fun <T: LanguageItem>selectItems(select: SelectInterface):Sequence<T> = sequence {
-//        yield( )
+        selectLocalItems(select).forEach {
+            yield(
+                if (it is GraphRelationship) select.context.makeRelationship(it)
+                else select.context.make(it)
+            )
+        }
     }
 
     private fun selectLocalItems(select:SelectInterface):Sequence<GraphItem> {
@@ -149,16 +156,16 @@ class Graph: GraphInterface {
             mySequence = when (select.direction) {
                 SelectDirection.RIGHT -> sequence {
                     fromSequence.forEach { n ->
-                        (n as GraphNode).sourcesFor.forEach { yield(it.value) }
+                        (n as GraphNode).sourcesFor.forEach { yield(it.key) }
                     }
                 }
                 SelectDirection.LEFT ->  sequence {
                     fromSequence.forEach { n ->
-                        (n as GraphNode).targetsFor.forEach { yield(it.value) }
+                        (n as GraphNode).targetsFor.forEach { yield(it.key) }
                     }
                 }
-                SelectDirection.RIGHT_NODE -> sequence { fromSequence.forEach { r -> (r as GraphRelationship).target } }
-                SelectDirection.LEFT_NODE -> sequence { fromSequence.forEach { r -> (r as GraphRelationship).source } }
+                SelectDirection.RIGHT_NODE -> fromSequence.map { r -> (r as GraphRelationship).target }
+                SelectDirection.LEFT_NODE -> fromSequence.map { r -> (r as GraphRelationship).source }
                 else -> sequenceOf()
             }
             // WARNING: this implementation differs from the key select

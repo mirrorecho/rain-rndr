@@ -8,13 +8,15 @@ open class Node(
     context:ContextInterface = LocalContext,
 ): GraphableNode, Item(key, properties, context) {
 
-    override val properties = properties.toMutableMap()
+    companion object: ItemCompanion() {
+        override val label: Label<Node> = Label(
+            factory = { k, p, c -> Node(k, p, c) },
+            labels = listOf("Node"),
+        )
+    }
+    override val label: LabelInterface get() = Node.label
 
-    // TODO: replace with label instance
-    override val labels get() = listOf(this::class.simpleName ?: "")
-
-    override val primaryLabel get() = this.labels[0]
-
-//    fun r
-
+    fun r(direction:SelectDirection, label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null):TargetedRelationshipSelect =
+        TargetedRelationshipSelect(context=this.context, label=label, keys=keys, properties=properties,
+            selectFrom=Select(this.context, primaryLabel, listOf(this.key)), direction=direction)
 }
