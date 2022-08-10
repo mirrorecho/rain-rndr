@@ -36,17 +36,17 @@ fun main() {
 //    val seq = Select(label="FancyNode", properties = mapOf("yo" to "YOYO"), )
 //    seq.asTypedSequence<FancyNode>().forEach { println(it.key) }
     println("-----------------------------------------------------------")
-    fn.r(SelectDirection.RIGHT).asSequence().forEach {println(it.key) }
-    println("-----------------------------------------------------------")
-    fn2.r(SelectDirection.LEFT).n().asSequence().forEach {println(it.key) }
+    fn.r(SelectDirection.RIGHT).n().asSequence().forEach {println(it.key) }
+//    println("-----------------------------------------------------------")
+//    fn2.r(SelectDirection.LEFT).n().asSequence().forEach {println(it.key) }
 
 //    yoFancy(fn2)
     println("-----------------------------------------------------------")
 
-    val c = Cell()
-    c.dur = sequenceOf(1,2,4)
-    c.machine = cycleOf("FLUTE")
-
-    c.veins.forEach { println(it) }
+//    val c = Cell()
+//    c.dur = sequenceOf(1,2,4)
+//    c.machine = cycleOf("FLUTE")
+//
+//    c.veins.forEach { println(it) }
 
 }

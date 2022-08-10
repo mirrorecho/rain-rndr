@@ -74,7 +74,7 @@ open class Cues(
 
 // ===========================================================================================================
 
-open class CueNext(
+open class CuesNext(
     key:String = rain.utils.autoKey(),
     source_key: String?, // TODO: this is wonky... really, key string should be required
     target_key: String?, // ditto
@@ -83,18 +83,18 @@ open class CueNext(
 ): Relationship(key, source_key, target_key, properties, context) {
 
     companion object : ItemCompanion() {
-        override val label: Label<CueNext> = Label(
-            factory = { k, p, c -> CueNext(k, null, null, p, c) },
-            labels = listOf("CUE_NEXT"),
+        override val label: Label<CuesNext> = Label(
+            factory = { k, p, c -> CuesNext(k, null, null, p, c) },
+            labels = listOf("CUES_NEXT"),
         )
     }
 
-    override val label: LabelInterface get() = CueNext.label
+    override val label: LabelInterface get() = CuesNext.label
 }
 
 // ===========================================================================================================
 
-open class CueFirst(
+open class CuesFirst(
     key:String = rain.utils.autoKey(),
     source_key: String?, // TODO: this is wonky... really, key string should be required
     target_key: String?, // ditto
@@ -103,18 +103,18 @@ open class CueFirst(
 ): Relationship(key, source_key, target_key, properties, context) {
 
     companion object : ItemCompanion() {
-        override val label: Label<CueFirst> = Label(
-            factory = { k, p, c -> CueFirst(k, null, null, p, c) },
-            labels = listOf("CUE_FIRST"),
+        override val label: Label<CuesFirst> = Label(
+            factory = { k, p, c -> CuesFirst(k, null, null, p, c) },
+            labels = listOf("CUES_FIRST"),
         )
     }
 
-    override val label: LabelInterface get() = CueFirst.label
+    override val label: LabelInterface get() = CuesFirst.label
 }
 
 // ===========================================================================================================
 
-open class CueLast(
+open class CuesLast(
     key:String = rain.utils.autoKey(),
     source_key: String?, // TODO: this is wonky... really, key string should be required
     target_key: String?, // ditto
@@ -123,13 +123,13 @@ open class CueLast(
 ): Relationship(key, source_key, target_key, properties, context) {
 
     companion object : ItemCompanion() {
-        override val label: Label<CueLast> = Label(
-            factory = { k, p, c -> CueLast(k, null, null, p, c) },
-            labels = listOf("CUE_LAST"),
+        override val label: Label<CuesLast> = Label(
+            factory = { k, p, c -> CuesLast(k, null, null, p, c) },
+            labels = listOf("CUES_LAST"),
         )
     }
 
-    override val label: LabelInterface get() = CueLast.label
+    override val label: LabelInterface get() = CuesLast.label
 }
 
 

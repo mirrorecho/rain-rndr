@@ -17,9 +17,8 @@ abstract class TreeSelect(
             }
         }
     }
-
 }
-
+// ===========================================================================================================
 
 open class TreeBranchesSelect(
     context:ContextInterface,
@@ -30,6 +29,7 @@ open class TreeBranchesSelect(
     override fun asSequence(): Sequence<Pattern> = getBranchCues().map { it.cuesPattern }
 
 }
+// ===========================================================================================================
 
 open class TreeLeavesSelect(
     context:ContextInterface,
@@ -40,8 +40,8 @@ open class TreeLeavesSelect(
     override fun asSequence(): Sequence<Leaf> = sequence {
         this@TreeLeavesSelect.getBranchCues().forEach { yieldAll(it.cuesPattern.leaves.asTypedSequence()) }
     }
-
 }
+// ===========================================================================================================
 
 open class TreeNodesSelect(
     context:ContextInterface,
@@ -55,6 +55,5 @@ open class TreeNodesSelect(
             yieldAll(it.cuesPattern.nodes.asTypedSequence())
         }
     }
-
 }
 
