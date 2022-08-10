@@ -18,5 +18,5 @@ open class Node(
 
     fun r(direction:SelectDirection, label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null):TargetedRelationshipSelect =
         TargetedRelationshipSelect(context=this.context, label=label, keys=keys, properties=properties,
-            selectFrom=Select(this.context, primaryLabel, listOf(this.key)), direction=direction)
+            selectFrom=selectSelf, direction=direction)
 }

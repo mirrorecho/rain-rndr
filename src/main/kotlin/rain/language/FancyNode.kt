@@ -22,5 +22,4 @@ open class FancyNode(
             this.properties["yo"] = v
         }
 
-
 }

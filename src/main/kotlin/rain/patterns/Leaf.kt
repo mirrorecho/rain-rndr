@@ -6,24 +6,20 @@ import rain.language.*
 // a node that represents an iterable over a group nodes ... each of which is connected
 // to this node, in a "pattern"
 // TODO maybe: is Pattern really an interface
-abstract class Pattern(
+open class Leaf(
     key:String = rain.utils.autoKey(),
     properties: Map<String, Any> = mapOf(),
     context: ContextInterface = LocalContext,
-): Node(key, properties, context) {
+): Pattern(key, properties, context) {
 
-    open val isAlter: Boolean = false
+    companion object : ItemCompanion() {
+        override val label: Label<Leaf> = Label(
+            factory = { k, p, c -> Leaf(k, p, c) },
+            labels = listOf("Leaf", "Pattern"),
+        )
+    }
+    override val label: LabelInterface get() = Leaf.label
 
-    // TODO: even needed?
-    abstract val  isLeaf: Boolean
-
-    abstract val branches: SelectInterface
-
-    abstract val leaves: SelectInterface
-
-    abstract val nodes: SelectInterface
-
-    abstract val veins: Sequence<Map<String, Any>>
 
     // TODO: implement the below
 //    # TODO: assume this doesn't need to be serialized?
@@ -34,5 +30,15 @@ abstract class Pattern(
 //    # node_hooks: Iterable[Callable[["rain.Pattern", "rain.Pattern"], "rain.Pattern"]] = ()
 //
 
+    override val isLeaf = true
+
+    override val branches = EmptySelect(context)
+
+    // TODO: implement hook logic here
+    override val leaves get() = SelfSelect(context, this)
+
+    override val nodes get() = SelfSelect(context, this)
+
+    override val veins: Sequence<Map<String, Any>> get() = sequenceOf(this.properties)
 
 }

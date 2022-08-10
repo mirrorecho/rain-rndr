@@ -1,6 +1,8 @@
 package rain.language
 
 import rain.interfaces.*
+import rain.patterns.Cue
+import rain.patterns.Pattern
 
 open class Select(
     override val context:ContextInterface = LocalContext,
@@ -56,6 +58,25 @@ class TargetedRelationshipSelect(
     }
 
 }
+
+open class SelfSelect(
+    context:ContextInterface,
+    private val selfNode: LanguageItem,
+):Select(context = context) {
+
+    override fun asSequence() = sequence { yield(this@SelfSelect.selfNode) }
+
+}
+
+
+open class EmptySelect(
+    context:ContextInterface,
+):Select(context = context) {
+    override fun asSequence(): Sequence<LanguageItem> = sequenceOf()
+
+}
+
+
 
 // NOTE: implementation possibility below with type parameter on the class itself... something to consider
 

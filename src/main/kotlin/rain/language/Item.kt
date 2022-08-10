@@ -15,6 +15,8 @@ abstract class Item(
 
     override val properties = properties.toMutableMap()
 
+    fun <T>getAs(n:String) = this[n] as T
+
     override fun save(): Item {
         context.graph.save(this)
         return this
@@ -39,7 +41,7 @@ abstract class Item(
         return this
     }
 
-
+    val selectSelf: Select get() = SelfSelect(this.context, this)
 
 
 }

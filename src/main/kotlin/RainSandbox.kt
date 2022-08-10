@@ -1,9 +1,9 @@
 import org.openrndr.application
 import rain.*
-import rain.graph.Graph
 import rain.interfaces.*
 import rain.language.*
-
+import rain.patterns.*
+import rain.utils.*
 
 fun yoFancy(li:LanguageItem) {
     println(li::class.simpleName)
@@ -43,5 +43,10 @@ fun main() {
 //    yoFancy(fn2)
     println("-----------------------------------------------------------")
 
+    val c = Cell()
+    c.dur = sequenceOf(1,2,4)
+    c.machine = cycleOf("FLUTE")
+
+    c.veins.forEach { println(it) }
 
 }

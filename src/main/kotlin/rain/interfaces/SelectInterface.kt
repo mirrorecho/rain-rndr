@@ -39,7 +39,7 @@ interface SelectInterface {
     // TODO: ever used?
     fun contains(key: String): Boolean = this.indexOfFirst(key) > -1
 
-    val first: LanguageItem get() = this.asSequence().first()
+    val first: LanguageItem? get() = this.asSequence().firstOrNull()
 
     fun get(key: String) {throw NotImplementedError()}
 
