@@ -26,6 +26,8 @@ interface SelectInterface {
         yieldAll(this@SelectInterface.graph.selectItems(this@SelectInterface ))
     }
 
+    fun forEach(action:(LanguageItem)->Unit) {asSequence().forEach {action(it)} }
+
     fun <T:LanguageItem>asTypedSequence(): Sequence<T> = asSequence().map {it as T}
 
 

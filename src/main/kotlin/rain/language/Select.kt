@@ -48,7 +48,6 @@ class TargetedRelationshipSelect(
     }
 
     override fun n(label:String?, keys:List<String>?, properties:Map<String,Any>?):Select {
-        println(this.direction)
         return Select(context=this.context, label=label, keys=keys, properties=properties, selectFrom=this,
             direction = when (this.direction) {
                 SelectDirection.RIGHT -> SelectDirection.RIGHT_NODE
@@ -61,10 +60,11 @@ class TargetedRelationshipSelect(
 
 open class SelfSelect(
     context:ContextInterface,
-    private val selfNode: LanguageItem,
-):Select(context = context) {
+    private val selfItem: LanguageItem,
+    // TODO maybe: also pass Label into Select constructor? (what performs better?)
+):Select(context = context, keys = listOf(selfItem.key)) {
 
-    override fun asSequence() = sequence { yield(this@SelfSelect.selfNode) }
+    override fun asSequence() = sequence { yield(this@SelfSelect.selfItem) }
 
 }
 

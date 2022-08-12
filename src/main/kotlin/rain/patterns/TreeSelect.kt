@@ -8,12 +8,19 @@ abstract class TreeSelect(
     protected val selfNode: Tree,
     ):Select(context = context) {
 
+    // TODO maybe... by lazy appropriate here? (assume yes)
+    override val keys by lazy { asSequence().map{it.key}.toList() }
+
+    // child classes must implement asSequence to avoid problems!
+    override fun asSequence(): Sequence<Pattern> = getBranchCues().map { throw(NotImplementedError()) }
+
     fun getBranchCues(): Sequence<Cue> = sequence {
-        this@TreeSelect.selfNode.r(SelectDirection.RIGHT, "CUE_FIRST").first?.let {
-            var childCue = it as Cue?
-            while (childCue != null) {
-                yield(childCue)
-                childCue = it.r(SelectDirection.RIGHT, "CUE_NEXT").n().first as Cue?
+        this@TreeSelect.selfNode.r(SelectDirection.RIGHT, "CUES_FIRST").n().first?.let {
+            var branchCue = it as Cue?
+            while (branchCue != null) {
+//                println(branchCue)
+                yield(branchCue)
+                branchCue = branchCue.r(SelectDirection.RIGHT, "CUES_NEXT").n().first as Cue?
             }
         }
     }
@@ -50,8 +57,8 @@ open class TreeNodesSelect(
 
     // TODO: handle branch hooks (eiter here or in tree)
     override fun asSequence(): Sequence<Pattern> = sequence {
+        yield(selfNode)
         this@TreeNodesSelect.getBranchCues().forEach {
-            yield(it.cuesPattern)
             yieldAll(it.cuesPattern.nodes.asTypedSequence())
         }
     }

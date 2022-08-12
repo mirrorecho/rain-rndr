@@ -17,6 +17,9 @@ open class Node(
     override val label: LabelInterface get() = Node.label
 
     fun r(direction:SelectDirection, label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null):TargetedRelationshipSelect =
-        TargetedRelationshipSelect(context=this.context, label=label, keys=keys, properties=properties,
-            selectFrom=selectSelf, direction=direction)
+        selectSelf.r(direction=direction, label=label, keys=keys, properties=properties)
+
+    fun targets(label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null):TargetedRelationshipSelect =
+        r(direction=SelectDirection.RIGHT, label=label, keys=keys, properties=properties)
+
 }

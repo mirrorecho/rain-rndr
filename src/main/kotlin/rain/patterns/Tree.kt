@@ -66,7 +66,7 @@ open class Tree(
         }
 
         // adds CuesLast relationship at the end
-        CuesLast(source_key = this.key, target_key = cueNodes.last().key)
+        CuesLast(source_key = this.key, target_key = cueNodes.last().key).createMe()
 
     }
 
