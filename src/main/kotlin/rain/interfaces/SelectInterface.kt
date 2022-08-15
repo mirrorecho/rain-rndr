@@ -26,10 +26,11 @@ interface SelectInterface {
         yieldAll(this@SelectInterface.graph.selectItems(this@SelectInterface ))
     }
 
+    fun <T:LanguageItem>asTypedSequence(): Sequence<T> = sequence {
+        yieldAll(this@SelectInterface.graph.selectItems(this@SelectInterface ))
+    }
+
     fun forEach(action:(LanguageItem)->Unit) {asSequence().forEach {action(it)} }
-
-    fun <T:LanguageItem>asTypedSequence(): Sequence<T> = asSequence().map {it as T}
-
 
     // TODO maybe: could use for more general implementation
 //    fun indexOfFirst(key:String, predicate: (LanguageItem)-> Boolean ): Int {
@@ -47,6 +48,14 @@ interface SelectInterface {
 
     // same as implementing __call__ method in python... cool
     operator fun invoke(label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null): SelectInterface {throw NotImplementedError()}
+
+    fun r(direction:SelectDirection, label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null):SelectInterface{
+        throw NotImplementedError()
+    }
+
+    fun n(label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null):SelectInterface {
+        throw NotImplementedError()
+    }
 
 }
 

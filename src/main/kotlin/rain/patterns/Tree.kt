@@ -10,7 +10,7 @@ open class Tree(
     key:String = rain.utils.autoKey(),
     properties: Map<String, Any> = mapOf(),
     context: ContextInterface = LocalContext,
-): Pattern(key, properties, context) {
+): Pattern, Node(key, properties, context) {
 
     companion object : ItemCompanion() {
         override val label: Label<Tree> = Label(
@@ -18,6 +18,8 @@ open class Tree(
             labels = listOf("Tree", "Pattern"),
         )
     }
+
+    override val isAlter = false
 
     override val isLeaf = false
 
@@ -30,10 +32,6 @@ open class Tree(
     override val nodes: TreeNodesSelect get() = TreeNodesSelect(context, this)
 
     override val leaves: TreeLeavesSelect get() = TreeLeavesSelect(context, this)
-
-    override val veins: Sequence<Map<String, Any>> get() = sequence {
-        leaves.asTypedSequence<Leaf>().forEach { yieldAll(it.veins) }
-    }
 
     val isEmpty: Boolean get() = r(SelectDirection.RIGHT, "CUES_FIRST").first == null
 
@@ -69,6 +67,27 @@ open class Tree(
         CuesLast(source_key = this.key, target_key = cueNodes.last().key).createMe()
 
     }
+}
 
+// ===========================================================================================================
+
+open class CellTree(
+    key:String = rain.utils.autoKey(),
+    properties: Map<String, Any> = mapOf(),
+    context: ContextInterface = LocalContext,
+): CellPattern, Tree(key, properties, context) {
+
+    companion object : ItemCompanion() {
+        override val label: Label<Tree> = Label(
+            factory = { k, p, c -> Tree(k, p, c) },
+            labels = listOf("CellTree", "Tree", "CellPattern", "Pattern"),
+        )
+    }
+
+    override val label: LabelInterface get() = CellTree.label
+
+    override val veins: Sequence<MutableMap<String, Any>> get() = sequence {
+        leaves.asTypedSequence<Cell>().forEach { yieldAll(it.veins) }
+    }
 
 }

@@ -40,3 +40,17 @@ interface GraphableItem {
     }
 
 }
+
+// ===========================================================================================================
+
+interface GraphableNode: GraphableItem {
+}
+
+// ===========================================================================================================
+
+interface GraphableRelationship: GraphableItem {
+
+    val source: GraphableNode
+    val target: GraphableNode
+
+}

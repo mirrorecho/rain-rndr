@@ -11,35 +11,31 @@ open class Cell(
     key:String = rain.utils.autoKey(),
     properties: Map<String, Any> = mapOf(),
     context: ContextInterface = LocalContext,
-): Leaf(key, properties, context) {
+): CellPattern, Leaf(key, properties, context) {
 
     companion object : ItemCompanion() {
         override val label: Label<Cell> = Label(
             factory = { k, p, c -> Cell(k, p, c) },
-            labels = listOf("Cell", "Leaf", "Pattern"),
+            labels = listOf("Cell", "Leaf", "CellPattern", "Pattern"),
         )
     }
     override val label: LabelInterface get() = Cell.label
 
-    val simultaneous: Boolean = false
+    override val isAlter = false
 
     var traverseNames = listOf("dur", "machine")
 
-    // TODO: maybe move these to a "MachineCell" child class?
-    // and TODO: would be ideal to set defaults to these
-    // and TODO: how to handle lambdas?
-    var dur:Sequence<Int>
-        get() = getAs("dur")
-        set(s) { this["dur"] = s }
-
-    var machine:Sequence<String>
-        get() = getAs("machine")
-        set(s) { this["machine"] = s }
-
 //    val dur: Sequence<Int> = sequenceOf(1).cycle()
 //    val dur: Sequence<Int> = sequenceOf(1).cycle()
 
-    override val veins: Sequence<Map<String, Any>> get() = sequence {
+    override fun <T>propertyByVein(key: String): Sequence<T> = this.properties[key] as Sequence<T>
+
+    // TODO: implement something like this for setting PARTIAL sequences of values
+//    override fun setPropertyByVein(key: String, values:Sequence<Any>) {
+//        veins.zip(values).forEach { it.first[key] = it.second }
+//    }
+
+    override val veins: Sequence<MutableMap<String, Any>> get() = sequence {
         var returnMap = mutableMapOf<String, Any>()
         var returning = true
         var namesIterators: List<Pair<String, Iterator<Any?>>> = traverseNames.map {

@@ -10,7 +10,7 @@ open class Leaf(
     key:String = rain.utils.autoKey(),
     properties: Map<String, Any> = mapOf(),
     context: ContextInterface = LocalContext,
-): Pattern(key, properties, context) {
+): Pattern, Node(key, properties, context) {
 
     companion object : ItemCompanion() {
         override val label: Label<Leaf> = Label(
@@ -30,6 +30,8 @@ open class Leaf(
 //    # node_hooks: Iterable[Callable[["rain.Pattern", "rain.Pattern"], "rain.Pattern"]] = ()
 //
 
+    override val isAlter = false
+
     override val isLeaf = true
 
     override val branches = EmptySelect(context)
@@ -38,7 +40,5 @@ open class Leaf(
     override val leaves get() = SelfSelect(context, this)
 
     override val nodes get() = SelfSelect(context, this)
-
-    override val veins: Sequence<Map<String, Any>> get() = sequenceOf(this.properties)
 
 }

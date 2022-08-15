@@ -1,5 +1,8 @@
 package rain.interfaces
 
+import rain.language.Item
+import rain.language.TargetedRelationshipSelect
+
 interface LanguageItem: GraphableItem {
 
     val label: LabelInterface
@@ -13,14 +16,46 @@ interface LanguageItem: GraphableItem {
 
     val graph: GraphInterface get() = this.context.graph
 
-    fun save(): GraphableItem
+    val selectSelf: SelectInterface
 
-    fun read(): GraphableItem
+    fun save(): LanguageItem {
+        context.graph.save(this)
+        return this
+    }
 
-    fun delete()
+    fun read(): LanguageItem {
+        context.graph.read(this)
+        return this
+    }
 
-    fun mergeMe(): GraphableItem
+    fun delete() {
+        context.graph.delete(this.key)
+    }
 
-    fun createMe(): GraphableItem
+    fun mergeMe(): LanguageItem {
+        context.graph.merge(this)
+        return this
+    }
+
+    fun createMe(): LanguageItem {
+        context.graph.create(this)
+        return this
+    }
+
+    fun <T>getAs(n:String) = this[n] as T
+
+}
+
+// ===========================================================================================================
+
+interface LanguageNode: LanguageItem, GraphableNode {
+    fun r(direction: SelectDirection, label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null): SelectInterface
+
+    fun targets(label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null): SelectInterface
+}
+
+// ===========================================================================================================
+
+interface LanguageRelationship: LanguageItem, GraphableRelationship {
 
 }

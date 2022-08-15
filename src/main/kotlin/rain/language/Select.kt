@@ -1,9 +1,11 @@
 package rain.language
 
 import rain.interfaces.*
-import rain.patterns.Cue
-import rain.patterns.Pattern
+import rain.utils.cycle
 
+fun <T: Node> SelectInterface.toPalette(): Palette<T> = Palette.fromSelect(this)
+
+// TODO: maybe use generic type parameters
 open class Select(
     override val context:ContextInterface = LocalContext,
     override val label: String? = null,
@@ -23,14 +25,13 @@ open class Select(
         return Select(context=this.context, label=label, keys=keys, properties=properties, selectFrom=this)
     }
 
-    open fun r(direction:SelectDirection, label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null):TargetedRelationshipSelect{
+    override fun r(direction:SelectDirection, label:String?, keys:List<String>?, properties:Map<String,Any>?):TargetedRelationshipSelect{
         return TargetedRelationshipSelect(context=this.context, label=label, keys=keys, properties=properties, selectFrom=this, direction=direction)
     }
 
-    open fun n(label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null):Select {
-        throw NotImplementedError()
-    }
 }
+
+// ===========================================================================================================
 
 class TargetedRelationshipSelect(
     context:ContextInterface = LocalContext,
@@ -58,6 +59,8 @@ class TargetedRelationshipSelect(
 
 }
 
+// ===========================================================================================================
+
 open class SelfSelect(
     context:ContextInterface,
     private val selfItem: LanguageItem,
@@ -68,6 +71,7 @@ open class SelfSelect(
 
 }
 
+// ===========================================================================================================
 
 open class EmptySelect(
     context:ContextInterface,
@@ -76,7 +80,7 @@ open class EmptySelect(
 
 }
 
-
+// ===========================================================================================================
 
 // NOTE: implementation possibility below with type parameter on the class itself... something to consider
 

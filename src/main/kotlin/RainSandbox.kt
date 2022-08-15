@@ -59,7 +59,7 @@ fun main() {
     println("-----------------------------------------------------------")
 
     val c1 = Cell("C1")
-    c1.dur = sequenceOf(1,2,4)
+    c1.dur = sequenceOf(1.0, 2.0, 4.0)
     c1.machine = cycleOf("FLUTE")
     c1.createMe()
     c1.veins.forEach { println(it) }
@@ -67,9 +67,10 @@ fun main() {
     println("-----------------------------------------------------------")
 
     val c2 = Cell("C2")
-    c2.dur = sequenceOf(3,1,0)
+    c2.dur = sequenceOf(3.0, 1.0, 0.0)
     c2.machine = cycleOf("VIOLA")
     c2.createMe()
+    c2.veins.forEach { println(it) }
     c2.veins.forEach { println(it) }
 
     println("-----------------------------------------------------------")
@@ -86,6 +87,11 @@ fun main() {
     t.createMe()
     t.extend(t1, t2)
 
+    val s = Select(keys=listOf("T", "T1", "T2")).toPalette<Tree>()
+
+    val pt = Palette.fromKeys<Tree>("T", "T1", "T2")
+    println(pt["T1"].veins.first())
+
 //    println(t1.r(SelectDirection.RIGHT, "CUES_FIRST").first)
 
 //    println(t1.branches.getBranchCues().toList())
@@ -94,6 +100,6 @@ fun main() {
 //    t.nodes.forEach { println(it.key) }
 //    t.leaves.forEach { println(it.key) }
 //
-    t.veins.forEach { println(it) }
+//    t.veins.forEach { println(it) }
 
 }

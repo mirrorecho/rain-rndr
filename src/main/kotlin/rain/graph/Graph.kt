@@ -169,7 +169,7 @@ class Graph: GraphInterface {
                 else -> sequenceOf()
             }
             // WARNING: this implementation differs from the key select
-            // above for the original select ... it's purely a filter ... won't re-order or duplicate items
+            // below for the original select ... it's purely a filter ... won't re-order or duplicate items
             if (!select.keys.isNullOrEmpty()) mySequence = mySequence.filter { select.keys!!.contains(it.key) }
 
             if (!select.label.isNullOrBlank()) mySequence = mySequence.filter { it.labels.contains(select.label!!) }
