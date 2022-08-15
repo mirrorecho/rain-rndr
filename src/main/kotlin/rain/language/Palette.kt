@@ -9,14 +9,14 @@ class Palette<T: LanguageNode>(
     init { this.extend(*nodes) }
 
     companion object {
-        fun <S:Node>fromSelect(select: SelectInterface): Palette<S> {
-            val myPalette = Palette<S>()
+        fun <S:LanguageNode>fromSelect(select: SelectInterface, context: ContextInterface = LocalContext): Palette<S> {
+            val myPalette = Palette<S>(context = context)
             myPalette.extendBySelect(select)
             return myPalette
         }
 
-        fun <S:Node>fromKeys(vararg keys: String): Palette<S> {
-            val myPalette = Palette<S>()
+        fun <S:LanguageNode>fromKeys(vararg keys: String, context: ContextInterface = LocalContext): Palette<S> {
+            val myPalette = Palette<S>(context = context)
             myPalette.extendByKeys(*keys)
             return myPalette
         }

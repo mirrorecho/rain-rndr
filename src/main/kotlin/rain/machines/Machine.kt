@@ -16,9 +16,8 @@ interface Machine: LanguageNode {
     fun render() { throw NotImplementedError() }
 
 
-    // TODO float the best format for dur/delay/time!!????
-    // ... and TODO should startDur even be here??
-    abstract fun trigger(startDelay:Double, properties: Map<String, Any>)
+    // TODO maybe use playerContext object (insted of just runningTime)
+    abstract fun trigger(runningTime:Double, properties: Map<String, Any>)
 
 }
 
@@ -29,13 +28,17 @@ open class Printer(
     context: ContextInterface = LocalContext,
 ): Machine, Leaf(key, properties, context) {
 
-    // TODO float the best format for dur/delay/time!!????
-    // ... and TODO should startDur even be here??
-    override fun trigger(startDelay:Double, properties: Map<String, Any>) {
+    companion object : ItemCompanion() {
+        override val label: Label<Printer> = Label(
+            factory = { k, p, c -> Printer(k, p, c) },
+            labels = listOf("Printer", "Machine"),
+        )
+    }
 
-        runBlocking {
-            delay( (startDelay * 1000.0).roundToLong() )
-        }
+    override val label: LabelInterface get() = Printer.label
+
+    override fun trigger(runningTime:Double, properties: Map<String, Any>) {
+        println("$runningTime: " + this.key + " " + properties.toString())
     }
 
 }

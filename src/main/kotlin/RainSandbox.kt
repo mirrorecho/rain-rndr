@@ -1,8 +1,7 @@
-import org.openrndr.application
-import rain.*
 import rain.interfaces.*
 import rain.language.*
 import rain.patterns.*
+import rain.machines.*
 import rain.utils.*
 
 fun yoFancy(li:LanguageItem) {
@@ -16,6 +15,7 @@ fun main() {
     LocalContext.registerLabel(Relationship.label)
 
     LocalContext.registerLabel(Tree.label)
+    LocalContext.registerLabel(CellTree.label)
     LocalContext.registerLabel(Cell.label)
     LocalContext.registerLabel(Cue.label)
 
@@ -24,6 +24,8 @@ fun main() {
     LocalContext.registerLabel(CuesFirst.label)
     LocalContext.registerLabel(CuesNext.label)
     LocalContext.registerLabel(CuesLast.label)
+
+    LocalContext.registerLabel(Printer.label)
 
 //    var f = LocalContext.make<FancyNode>("FancyNode", "NODEFN123", mapOf("yo" to "MAMA"))
 
@@ -62,35 +64,39 @@ fun main() {
     c1.dur = sequenceOf(1.0, 2.0, 4.0)
     c1.machine = cycleOf("FLUTE")
     c1.createMe()
-    c1.veins.forEach { println(it) }
-
-    println("-----------------------------------------------------------")
 
     val c2 = Cell("C2")
-    c2.dur = sequenceOf(3.0, 1.0, 0.0)
+    c2.dur = sequenceOf(3.0, 1.0, 1.0)
     c2.machine = cycleOf("VIOLA")
     c2.createMe()
-    c2.veins.forEach { println(it) }
-    c2.veins.forEach { println(it) }
 
-    println("-----------------------------------------------------------")
-
-    val t1 = Tree("T1")
+    val t1 = CellTree("T1")
     t1.createMe()
     t1.extend(c1, c2)
 
-    val t2 = Tree("T2")
+    val t2 = CellTree("T2")
     t2.createMe()
     t2.extend(c2, c1)
 
-    val t = Tree("T")
+    val t = CellTree("T")
     t.createMe()
     t.extend(t1, t2)
 
-    val s = Select(keys=listOf("T", "T1", "T2")).toPalette<Tree>()
+    c2.veins.forEach { println(it) }
 
-    val pt = Palette.fromKeys<Tree>("T", "T1", "T2")
-    println(pt["T1"].veins.first())
+    println("-----------------------------------------------------------")
+
+    Printer("FLUTE").createMe()
+    Printer("VIOLA").createMe()
+    val printMachines = Palette.fromKeys<Printer>("FLUTE", "VIOLA")
+
+    val player = Player(c2, printMachines as Palette<Machine>)
+
+    player.play()
+
+//    val s = Select(keys=listOf("T", "T1", "T2")).toPalette<CellTree>()
+
+
 
 //    println(t1.r(SelectDirection.RIGHT, "CUES_FIRST").first)
 

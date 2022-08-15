@@ -25,6 +25,17 @@ open class Cell(
 
     var traverseNames = listOf("dur", "machine")
 
+    override var dur:Sequence<Double>
+        get() = this.properties["dur"] as Sequence<Double>
+        set(values) { this.properties["dur"] = values }
+
+    // the following probably not even needed since dur.sum() is so easy!
+//    val sumDur: Double get() = dur.sum()
+
+    override var machine:Sequence<String>
+        get() = this.properties["machine"] as Sequence<String>
+        set(values) { this.properties["machine"] = values }
+
 //    val dur: Sequence<Int> = sequenceOf(1).cycle()
 //    val dur: Sequence<Int> = sequenceOf(1).cycle()
 

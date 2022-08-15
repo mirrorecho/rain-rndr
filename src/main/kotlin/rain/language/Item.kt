@@ -14,7 +14,11 @@ abstract class Item(
     override val context: ContextInterface
 ): LanguageItem {
 
-    override val properties = properties.toMutableMap()
+    // TODO: not so elegant way to initialize properties... rethink?
+    open fun setInitProperties(existingProperties:MutableMap<String, Any>) {
+    }
+
+    override val properties = properties.toMutableMap().apply { setInitProperties(this) }
 
     override val selectSelf: Select get() = SelfSelect(this.context, this)
 

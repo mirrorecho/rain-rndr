@@ -78,10 +78,15 @@ open class CellTree(
 ): CellPattern, Tree(key, properties, context) {
 
     companion object : ItemCompanion() {
-        override val label: Label<Tree> = Label(
-            factory = { k, p, c -> Tree(k, p, c) },
+        override val label: Label<CellTree> = Label(
+            factory = { k, p, c -> CellTree(k, p, c) },
             labels = listOf("CellTree", "Tree", "CellPattern", "Pattern"),
         )
+    }
+
+    override fun setInitProperties(existingProperties:MutableMap<String, Any>) {
+        super.setInitProperties(existingProperties)
+        existingProperties.putIfAbsent("simultaneous", false)
     }
 
     override val label: LabelInterface get() = CellTree.label

@@ -1,9 +1,12 @@
 package rain.machines
 
+import kotlinx.coroutines.*
 import rain.interfaces.*
 import rain.language.*
 import rain.patterns.*
 import java.util.*
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class Player(
     val cellPattern: CellPattern,
@@ -38,7 +41,22 @@ class Player(
         triggers.clear()
     }
 
-    fun play() {
+    fun play() = runBlocking {
         reset()
+        // TODO maybe - auto-populate machinePalette?
+        setTriggers(this@Player.cellPattern)
+        var runningTime = 0.0
+        println(triggers.toString())
+        triggers.keys.sorted().forEach {
+            delay((it-runningTime).toDuration(DurationUnit.SECONDS) )
+            launch { triggerAt(it, triggers[it]!!) }
+            runningTime += it
+        }
+    }
+
+    fun triggerAt(runningTime: Double, triggerList: List<Map<String, Any>>) {
+        triggerList.forEach { p ->
+            this@Player.machinePalette[p["machine"] as String].trigger(runningTime, p)
+        }
     }
 }
