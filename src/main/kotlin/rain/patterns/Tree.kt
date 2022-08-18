@@ -84,6 +84,7 @@ open class CellTree(
         )
     }
 
+    // TODO: not elegant!
     override fun setInitProperties(existingProperties:MutableMap<String, Any>) {
         super.setInitProperties(existingProperties)
         existingProperties.putIfAbsent("simultaneous", false)

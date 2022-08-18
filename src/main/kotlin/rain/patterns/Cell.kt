@@ -46,13 +46,20 @@ open class Cell(
 //        veins.zip(values).forEach { it.first[key] = it.second }
 //    }
 
+    // TODO: not elegant!
+    override fun setInitProperties(existingProperties:MutableMap<String, Any>) {
+        super.setInitProperties(existingProperties)
+        existingProperties.putIfAbsent("simultaneous", false)
+    }
+
+
     override val veins: Sequence<MutableMap<String, Any>> get() = sequence {
-        var returnMap = mutableMapOf<String, Any>()
         var returning = true
-        var namesIterators: List<Pair<String, Iterator<Any?>>> = traverseNames.map {
+        val namesIterators: List<Pair<String, Iterator<Any?>>> = traverseNames.map {
             Pair(it, this@Cell.getAs<Sequence<*>>(it).iterator())
         }
         while (returning) {
+            val returnMap = mutableMapOf<String, Any>()
             namesIterators.forEach {
                 if (it.second.hasNext()) returnMap[it.first] = it.second.next() as Any
                 else returning = false

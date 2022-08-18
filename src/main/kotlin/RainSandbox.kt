@@ -60,13 +60,13 @@ fun main() {
 //    yoFancy(fn2)
     println("-----------------------------------------------------------")
 
-    val c1 = Cell("C1")
-    c1.dur = sequenceOf(1.0, 2.0, 4.0)
+    val c1 = Cell("C1", mapOf("simultaneous" to true))
+    c1.dur = sequenceOf(4.0, 2.0, 1.0)
     c1.machine = cycleOf("FLUTE")
     c1.createMe()
 
     val c2 = Cell("C2")
-    c2.dur = sequenceOf(3.0, 1.0, 1.0)
+    c2.dur = sequenceOf(3.0, 1.0, 0.5)
     c2.machine = cycleOf("VIOLA")
     c2.createMe()
 
@@ -78,11 +78,9 @@ fun main() {
     t2.createMe()
     t2.extend(c2, c1)
 
-    val t = CellTree("T")
+    val t = CellTree("T", mapOf("simultaneous" to true))
     t.createMe()
     t.extend(t1, t2)
-
-    c2.veins.forEach { println(it) }
 
     println("-----------------------------------------------------------")
 
@@ -90,7 +88,7 @@ fun main() {
     Printer("VIOLA").createMe()
     val printMachines = Palette.fromKeys<Printer>("FLUTE", "VIOLA")
 
-    val player = Player(c2, printMachines as Palette<Machine>)
+    val player = Player(t, printMachines as Palette<Machine>)
 
     player.play()
 
