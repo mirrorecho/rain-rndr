@@ -39,6 +39,8 @@ class Palette<T: LanguageNode>(
         select.asTypedSequence<T>().forEach { this.nodes[it.key]=it }
     }
 
+    fun forEach(action:(T)->Unit) {nodes.forEach {action(it.value)} }
+
     // TODO maybe: implement below?
     // fun extendByKey(vararg keys: String)
 

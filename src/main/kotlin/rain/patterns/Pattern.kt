@@ -29,9 +29,9 @@ interface Pattern: LanguageNode {
 //    # TODO: MAYBE consider this
 //    # node_hooks: Iterable[Callable[["rain.Pattern", "rain.Pattern"], "rain.Pattern"]] = ()
 //
-
-
 }
+
+// ===========================================================================================================
 
 // TODO: maybe rethink naming?
 interface CellPattern:Pattern {

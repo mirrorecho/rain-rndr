@@ -7,12 +7,19 @@ import rain.patterns.*
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-
+import org.openrndr.application
+import org.openrndr.Program
+import org.openrndr.animatable.Animatable
+import org.openrndr.animatable.easing.Easing
+import org.openrndr.color.ColorRGBa
+import org.openrndr.launch
+import rain.rndr.RndrMachine
 
 // TODO: implement tempos
-class Player(
+// TODO: refactor to inherit from Player
+class RndrPlayer(
     val cellPattern: CellPattern,
-    val machinePalette: Palette<Machine>,
+    val machinePalette: Palette<RndrMachine>,
 ) {
 
     // TODO maybe: instead of just a list, this could be something like a timed trigger bundle? (inc. max dur predefined?)
@@ -59,28 +66,62 @@ class Player(
         triggers.clear()
     }
 
-    fun play() = runBlocking {
+    fun play() = application {
         reset()
         // TODO maybe - auto-populate machinePalette?
         // TODO maybe - don't set all triggers upfront? ... maybe just launch co-routines ..as needed?
-        setTriggers(this@Player.cellPattern)
+        setTriggers(this@RndrPlayer.cellPattern)
         var prevTriggerTime = 0.0
         println(triggers.toSortedMap())
 
-        triggers.keys.sorted().forEach { triggerTime ->
-            val triggerList = triggers[triggerTime]!!
-            val delayTime = triggerTime - prevTriggerTime
-            if (delayTime > 0) delay((delayTime).toDuration(DurationUnit.SECONDS))
-            launch { triggerAt(triggerTime, triggerList) }
-            prevTriggerTime = triggerTime
+        val animation = object : Animatable() {
+            var x: Double = 0.0
         }
 
-    }
+        var myColor = ColorRGBa.PINK
 
-    fun triggerAt(runningTime: Double, triggerList: List<Map<String, Any>>) {
-        triggerList.forEach { p ->
-            this@Player.machinePalette[p["machine"] as String].trigger(runningTime, p)
+        program {
+
+            launch {
+                triggers.keys.sorted().forEach { triggerTime ->
+                    val triggerList = triggers[triggerTime]!!
+                    val delayTime = triggerTime - prevTriggerTime
+                    if (delayTime > 0) delay((delayTime).toDuration(DurationUnit.SECONDS))
+                    launch {
+                        triggerList.forEach { p ->
+                            val machine = this@RndrPlayer.machinePalette[p["machine"] as String]
+                            val instance = machine.triggerOn(triggerTime, this@program, p)
+                            launch {
+                                delay((instance.dur).toDuration(DurationUnit.SECONDS))
+                                machine.triggerOff(instance)
+                            }
+                        }
+                    }
+                    prevTriggerTime = triggerTime
+                }
+            }
+
+            extend {
+
+                machinePalette.forEach { it.render() }
+
+                // DO NOTHING?
+
+//                animation.updateAnimation()
+//                if (!animation.hasAnimations()) {
+//                    animation.apply {
+//                        ::x.animate(width.toDouble(), 1000, Easing.CubicInOut)
+//                        ::x.complete()
+//                        ::x.animate(0.0, 1000, Easing.CubicInOut)
+//                        ::x.complete()
+//                    }
+//                }
+//                drawer.fill = myColor
+//                drawer.stroke = null
+//                drawer.circle(animation.x, height / 2.0, 100.0)
+            }
+
         }
-
     }
+
 }

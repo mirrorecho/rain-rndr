@@ -15,9 +15,8 @@ interface Machine: LanguageNode {
 
     fun render() { throw NotImplementedError() }
 
-
-    // TODO maybe use playerContext object (insted of just runningTime)
-    abstract fun trigger(runningTime:Double, properties: Map<String, Any>)
+    // TODO maybe use playerContext object (instead of just runningTime)
+    fun trigger(runningTime:Double, properties: Map<String, Any>) { throw NotImplementedError() }
 
 }
 
