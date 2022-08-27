@@ -14,7 +14,7 @@ open class Context<G:GraphInterface>(
 
     override fun get(labelName:String): LabelInterface? = this.labelRegistry[labelName]
 
-    override fun <T: LanguageItem>make(labelName:String, key:String, properties:Map<String, Any>, context:ContextInterface): T {
+    override fun <T: LanguageItem>make(labelName:String, key:String, properties: Map<String, Any?>, context:ContextInterface): T {
         // TODO: throw more specific exception here if label not found?
         return this.labelRegistry[labelName]?.make(key, properties, context) as T
     }

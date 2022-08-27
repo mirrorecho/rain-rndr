@@ -10,7 +10,7 @@ open class Select(
     override val context:ContextInterface = LocalContext,
     override val label: String? = null,
     override val keys: List<String>? = null,
-    override val properties: Map<String, Any>? = null,
+    override val properties: Map<String, Any?>? = null,
     override val selectFrom: SelectInterface? = null,
     override val direction: SelectDirection? = null,
 ):SelectInterface {
@@ -37,7 +37,7 @@ class TargetedRelationshipSelect(
     context:ContextInterface = LocalContext,
     label: String? = null,
     keys: List<String>? = null,
-    properties: Map<String, Any>? = null,
+    properties: Map<String, Any?>? = null,
     selectFrom: SelectInterface? = null,
     direction: SelectDirection? = null,
 ):Select(context, label, keys, properties, selectFrom, direction) {
@@ -88,7 +88,7 @@ open class EmptySelect(
 //    override val context:ContextInterface = LocalContext,
 //    override val label: String? = null,
 //    override val keys: List<String>? = null,
-//    override val properties: Map<String, Any>? = null,
+//    override val properties: Map<String, Any?>? = null,
 //    override val selectFrom: SelectInterface? = null,
 //    override val direction: SelectDirection? = null,
 //):SelectInterface {
@@ -123,7 +123,7 @@ open class EmptySelect(
 //    context:ContextInterface = LocalContext,
 //    label: String? = null,
 //    keys: List<String>? = null,
-//    properties: Map<String, Any>? = null,
+//    properties: Map<String, Any?>? = null,
 //    selectFrom: SelectInterface? = null,
 //    direction: SelectDirection? = null,
 //):Select<R>(context, label, keys, properties, selectFrom, direction) {

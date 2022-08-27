@@ -23,9 +23,9 @@ class RndrPlayer(
 ) {
 
     // TODO maybe: instead of just a list, this could be something like a timed trigger bundle? (inc. max dur predefined?)
-    private val triggers: MutableMap<Double, MutableList<Map<String, Any>>> = mutableMapOf()
+    private val triggers: MutableMap<Double, MutableList<Map<String, Any?>>> = mutableMapOf()
 
-    private fun setTrigger(time:Double, properties: Map<String, Any>) {
+    private fun setTrigger(time:Double, properties: Map<String, Any?>) {
         val timeTriggerList = triggers.getOrPut(time) {mutableListOf()}
         timeTriggerList.add(properties)
     }

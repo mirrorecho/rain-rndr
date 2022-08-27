@@ -1,7 +1,6 @@
 package rain.interfaces
 
 import rain.language.Relationship
-import rain.language.Node
 
 interface ContextInterface {
     val graph: GraphInterface
@@ -14,14 +13,14 @@ interface ContextInterface {
 
     fun get(labelName:String): LabelInterface?
 
-    fun <T: LanguageItem>make(labelName:String, key:String, properties:Map<String, Any> = mapOf(), context: ContextInterface=this): T
+    fun <T: LanguageItem>make(labelName:String, key:String, properties: Map<String, Any?> = mapOf(), context: ContextInterface=this): T
 
     fun <T: LanguageItem>make(fromItem:GraphableItem): T {
         return this.make(fromItem.primaryLabel, fromItem.key, fromItem.properties, this)
     }
 
     // TODO: this is odd, esp. since generic type is just LanguageItem (not a type of relationship)
-    fun <T: LanguageItem>makeRelationship(labelName:String, key:String, source_key:String, target_key:String, properties:Map<String, Any> = mapOf(), context: ContextInterface=this): T {
+    fun <T: LanguageItem>makeRelationship(labelName:String, key:String, source_key:String, target_key:String, properties: Map<String, Any?> = mapOf(), context: ContextInterface=this): T {
         val myRelationship = this.make(labelName, key, properties, context) as Relationship
         myRelationship.source_key = source_key
         myRelationship.target_key = target_key

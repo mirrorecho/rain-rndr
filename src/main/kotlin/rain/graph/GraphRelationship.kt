@@ -7,10 +7,10 @@ class GraphRelationship(
     val relationshipType: String,
     override val source: GraphNode,
     override val target: GraphNode,
-    properties: Map<String, Any> = mapOf()
+    properties: Map<String, Any?> = mapOf()
 ) : GraphableRelationship, GraphItem {
 
-    override val properties = properties.toMutableMap()
+    override val properties: MutableMap<String, Any?> = properties.toMutableMap()
 
     // TODO: replace with label instance
     override val labels get() = listOf(this.relationshipType)

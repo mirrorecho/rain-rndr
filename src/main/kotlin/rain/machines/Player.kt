@@ -1,7 +1,6 @@
 package rain.machines
 
 import kotlinx.coroutines.*
-import rain.interfaces.*
 import rain.language.*
 import rain.patterns.*
 import kotlin.time.DurationUnit
@@ -16,9 +15,9 @@ class Player(
 ) {
 
     // TODO maybe: instead of just a list, this could be something like a timed trigger bundle? (inc. max dur predefined?)
-    private val triggers: MutableMap<Double, MutableList<Map<String, Any>>> = mutableMapOf()
+    private val triggers: MutableMap<Double, MutableList<Map<String, Any?>>> = mutableMapOf()
 
-    private fun setTrigger(time:Double, properties: Map<String, Any>) {
+    private fun setTrigger(time:Double, properties: Map<String, Any?>) {
         val timeTriggerList = triggers.getOrPut(time) {mutableListOf()}
         timeTriggerList.add(properties)
     }
@@ -77,7 +76,7 @@ class Player(
 
     }
 
-    fun triggerAt(runningTime: Double, triggerList: List<Map<String, Any>>) {
+    fun triggerAt(runningTime: Double, triggerList: MutableList<Map<String, Any?>>) {
         triggerList.forEach { p ->
             this@Player.machinePalette[p["machine"] as String].trigger(runningTime, p)
         }

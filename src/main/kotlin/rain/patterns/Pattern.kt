@@ -1,7 +1,6 @@
 package rain.patterns
 
 import rain.interfaces.*
-import rain.language.*
 
 // a node that represents an iterable over a group nodes ... each of which is connected
 // to this node, in a "pattern"
@@ -37,10 +36,8 @@ interface Pattern: LanguageNode {
 interface CellPattern:Pattern {
 
     var simultaneous: Boolean
-        get() = this.properties["simultaneous"] as Boolean
-        set(value) {this.properties["simultaneous"] = Boolean}
 
-    val veins: Sequence<MutableMap<String, Any>>
+    val veins: Sequence<MutableMap<String, Any?>>
 
     fun <T>propertyByVein(key: String): Sequence<T> = veins.map { it[key] as T }
 

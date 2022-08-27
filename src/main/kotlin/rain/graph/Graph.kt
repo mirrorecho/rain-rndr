@@ -1,8 +1,6 @@
 package rain.graph
 
-import kotlinx.coroutines.yield
 import rain.interfaces.*
-import rain.language.LocalContext
 
 class Graph: GraphInterface {
     // TODO: rename to keyIndex
@@ -51,14 +49,14 @@ class Graph: GraphInterface {
 
     // =================================================================================
 
-    private fun createGraphNode(key:String, labels:List<String> = listOf(), properties:Map<String, Any> = mapOf()) {
+    private fun createGraphNode(key:String, labels:List<String> = listOf(), properties: Map<String, Any?> = mapOf()) {
         var node = GraphNode(key, labels, properties)
         this.data[key] = node
         labels.forEach { this.addLabelIndex(it, node) }
     }
 
     private fun createGraphRelationship(key:String, relationshipType:String,
-                                        sourceKey:String, targetKey:String, properties:Map<String, Any> = mapOf()) {
+                                        sourceKey:String, targetKey:String, properties: Map<String, Any?> = mapOf()) {
         this.checkKey(sourceKey)
         this.checkKey(targetKey)
 

@@ -18,20 +18,20 @@ interface GraphableItem {
 
     val primaryLabel: String
 
-    val properties: MutableMap<String, Any>
+    val properties: MutableMap<String, Any?>
 
     operator fun get(name:String) = this.properties[name]
 
     operator fun set(name:String, value:Any) { this.properties[name]=value }
 
-    fun anyPropertyMatches(matchProperties: Map<String, Any>): Boolean {
+    fun anyPropertyMatches(matchProperties: Map<String, Any?>): Boolean {
         return matchProperties.asIterable().indexOfFirst {
             // TODO is this the fastest implementation...? maybe another indexOfFirst instead?
             this.properties.contains(it.key) && this.properties[it.key] == it.value
         } > -1
     }
 
-    fun updatePropertiesFrom(properties: Map<String, Any>) {
+    fun updatePropertiesFrom(properties: Map<String, Any?>) {
         this.properties.putAll(properties)
     }
 

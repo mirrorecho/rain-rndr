@@ -1,6 +1,7 @@
 package rain.language
 
 import rain.interfaces.*
+import rain.utils.autoKey
 
 abstract class ItemCompanion {
     abstract val label: LabelInterface
@@ -10,15 +11,15 @@ abstract class ItemCompanion {
 
 abstract class Item(
     override val key:String,
-    properties: Map<String, Any>,
+    properties: Map<String, Any?>,
     override val context: ContextInterface
 ): LanguageItem {
 
     // TODO: not so elegant way to initialize properties... rethink?
-    open fun setInitProperties(existingProperties:MutableMap<String, Any>) {
+    open fun setInitProperties(existingProperties: MutableMap<String, Any?>) {
     }
 
-    override val properties = properties.toMutableMap().apply { setInitProperties(this) }
+    final override val properties: MutableMap<String, Any?> = properties.toMutableMap().apply { setInitProperties(this) }
 
     override val selectSelf: Select get() = SelfSelect(this.context, this)
 
@@ -27,8 +28,8 @@ abstract class Item(
 // ===========================================================================================================
 
 open class Node(
-    override val key:String = rain.utils.autoKey(),
-    properties: Map<String, Any> = mapOf(),
+    override val key:String = autoKey(),
+    properties: Map<String, Any?> = mapOf(),
     override val context: ContextInterface = LocalContext,
 ): LanguageNode, Item(key, properties, context) {
 
@@ -51,10 +52,10 @@ open class Node(
 // ===========================================================================================================
 
 open class Relationship(
-    key:String = rain.utils.autoKey(),
+    key:String = autoKey(),
     var source_key: String?, // TODO: this is wonky... really, key string should be required
     var target_key: String?, // ditto
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context:ContextInterface = LocalContext,
 ): LanguageRelationship, Item(key, properties, context) {
 

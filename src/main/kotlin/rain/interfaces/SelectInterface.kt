@@ -14,7 +14,7 @@ interface SelectInterface {
 
     val keys: List<String>?
 
-    val properties: Map<String, Any>?
+    val properties: Map<String, Any?>?
 
     val selectFrom: SelectInterface?
 

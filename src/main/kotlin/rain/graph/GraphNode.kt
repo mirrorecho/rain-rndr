@@ -5,10 +5,10 @@ import rain.interfaces.*
 class GraphNode(
     override val key:String,
     override val labels: List<String>,
-    properties: Map<String, Any> = mapOf()
+    properties: Map<String, Any?> = mapOf()
 ) : GraphableNode, GraphItem {
 
-    override val properties = properties.toMutableMap()
+    override val properties: MutableMap<String, Any?> = properties.toMutableMap()
 
     //maps for faster indexing ... keys are relationships, values are the target nodes
     internal val sourcesFor = mutableMapOf<GraphRelationship, GraphNode>()

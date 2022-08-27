@@ -7,7 +7,7 @@ import rain.interfaces.*
 // ... given data for the item (key, properties), instantiates that item
 
 class Label<T:LanguageItem>(
-    override val factory: (key:String, properties:Map<String, Any>, context:ContextInterface)-> T,
+    override val factory: (key:String, properties: Map<String, Any?>, context:ContextInterface)-> T,
     override var labels: List<String> = listOf(), // TODO set this automatically based on T
 
 //  TODO: would this be used?
@@ -28,7 +28,7 @@ class Label<T:LanguageItem>(
 //    }
 
 
-    override fun make(key:String, properties:Map<String, Any>, context: ContextInterface): T {
+    override fun make(key:String, properties: Map<String, Any?>, context: ContextInterface): T {
         return this.factory(key,properties, context)
     }
 

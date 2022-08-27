@@ -4,7 +4,7 @@ import rain.interfaces.*
 
 open class FancyNode(
     key:String = rain.utils.autoKey(),
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
 ):Node(key, properties, context) {
 

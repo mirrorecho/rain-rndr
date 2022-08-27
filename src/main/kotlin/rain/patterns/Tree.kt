@@ -8,7 +8,7 @@ import rain.language.*
 // TODO maybe: is Pattern really an interface
 open class Tree(
     key:String = rain.utils.autoKey(),
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
 ): Pattern, Node(key, properties, context) {
 
@@ -73,7 +73,7 @@ open class Tree(
 
 open class CellTree(
     key:String = rain.utils.autoKey(),
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
 ): CellPattern, Tree(key, properties, context) {
 
@@ -84,16 +84,22 @@ open class CellTree(
         )
     }
 
-    // TODO: not elegant!
-    override fun setInitProperties(existingProperties:MutableMap<String, Any>) {
-        super.setInitProperties(existingProperties)
-        existingProperties.putIfAbsent("simultaneous", false)
-    }
+    override var simultaneous: Boolean by this.properties.apply { putIfAbsent("simultaneous", false) }
+
+//    // TODO: not elegant!
+//    override fun setInitProperties(existingProperties: MutableMap<String, Any?>) {
+//        super.setInitProperties(existingProperties)
+//        existingProperties.putIfAbsent("simultaneous", false)
+//    }
 
     override val label: LabelInterface get() = CellTree.label
 
-    override val veins: Sequence<MutableMap<String, Any>> get() = sequence {
-        leaves.asTypedSequence<Cell>().forEach { yieldAll(it.veins) }
+    override val veins: Sequence<MutableMap<String, Any?>> get() = sequence {
+        leaves.asTypedSequence<Cell>().forEach { c->
+            yieldAll( c.veins.map {
+                it.u
+            } )
+        }
     }
 
 }

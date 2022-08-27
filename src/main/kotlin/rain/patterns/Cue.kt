@@ -7,7 +7,7 @@ import rain.language.*
 
 open class Cue(
     key:String = rain.utils.autoKey(),
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
 ): Node(key, properties, context) {
 
@@ -38,7 +38,7 @@ open class Contains(
     key:String = rain.utils.autoKey(),
     source_key: String?, // TODO: this is wonky... really, key string should be required
     target_key: String?, // ditto
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context:ContextInterface = LocalContext,
 ): Relationship(key, source_key, target_key, properties, context) {
 
@@ -58,7 +58,7 @@ open class Cues(
     key:String = rain.utils.autoKey(),
     source_key: String?, // TODO: this is wonky... really, key string should be required
     target_key: String?, // ditto
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context:ContextInterface = LocalContext,
 ): Relationship(key, source_key, target_key, properties, context) {
 
@@ -78,7 +78,7 @@ open class CuesNext(
     key:String = rain.utils.autoKey(),
     source_key: String?, // TODO: this is wonky... really, key string should be required
     target_key: String?, // ditto
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context:ContextInterface = LocalContext,
 ): Relationship(key, source_key, target_key, properties, context) {
 
@@ -98,7 +98,7 @@ open class CuesFirst(
     key:String = rain.utils.autoKey(),
     source_key: String?, // TODO: this is wonky... really, key string should be required
     target_key: String?, // ditto
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context:ContextInterface = LocalContext,
 ): Relationship(key, source_key, target_key, properties, context) {
 
@@ -118,7 +118,7 @@ open class CuesLast(
     key:String = rain.utils.autoKey(),
     source_key: String?, // TODO: this is wonky... really, key string should be required
     target_key: String?, // ditto
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context:ContextInterface = LocalContext,
 ): Relationship(key, source_key, target_key, properties, context) {
 

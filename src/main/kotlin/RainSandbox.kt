@@ -65,8 +65,10 @@ fun main() {
 //    println("-----------------------------------------------------------")
 //
 
-    Circle("BIG_CIRCLE", mapOf("radius" to 200.0, "vHSV" to 0.2)).createMe()
+    Circle("BIG_CIRCLE", mapOf("vHSV" to 0.2)).createMe()
     Circle("SMALL_CIRCLE", mapOf("radius" to 90.0, "vHSV" to 0.2)).createMe()
+
+    println("-----------------------------------------------------------")
 
     val c1 = Cell("C1",
 //        mapOf("simultaneous" to true)
@@ -90,10 +92,14 @@ fun main() {
     t2.extend(c2, c1)
 
     val t = CellTree("T",
-//        mapOf("simultaneous" to true)
+        mapOf("simultaneous" to true)
     )
     t.createMe()
     t.extend(t1, t2)
+
+    println("-----------------------------------------------------------")
+
+    println(t.simultaneous)
 
     println("-----------------------------------------------------------")
 
@@ -101,7 +107,13 @@ fun main() {
 
     val player = RndrPlayer(t, rndrMachines as Palette<RndrMachine>)
 
+    println("-----------------------------------------------------------")
+
     player.play()
+
+    fun yoDict(vararg pairs: Pair<String, Any?>): Map<String, Any?> = pairs.toMap()
+
+    yoDict("fo" to null, "fan" to 4)
 
 //    val s = Select(keys=listOf("T", "T1", "T2")).toPalette<CellTree>()
 

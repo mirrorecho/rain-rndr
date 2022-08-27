@@ -8,7 +8,7 @@ import rain.language.*
 // TODO maybe: is Pattern really an interface
 open class Leaf(
     key:String = rain.utils.autoKey(),
-    properties: Map<String, Any> = mapOf(),
+    properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
 ): Pattern, Node(key, properties, context) {
 
