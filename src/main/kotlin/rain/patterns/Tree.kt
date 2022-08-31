@@ -33,6 +33,8 @@ open class Tree(
 
     override val leaves: TreeLeavesSelect get() = TreeLeavesSelect(context, this)
 
+    override var cachedParentage = listOf<Tree>()
+
     val isEmpty: Boolean get() = r(SelectDirection.RIGHT, "CUES_FIRST").first == null
 
     fun extend(vararg patterns: Pattern) {
@@ -95,6 +97,7 @@ open class CellTree(
     override val label: LabelInterface get() = CellTree.label
 
     override val veins: Sequence<MutableMap<String, Any?>> get() = sequence {
+        // TODO: use cueContext to propogate parentage properties to veins
         leaves.asTypedSequence<Cell>().forEach { c->
             yieldAll( c.veins.map {
                 it.u

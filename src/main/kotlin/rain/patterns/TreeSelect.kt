@@ -14,6 +14,8 @@ abstract class TreeSelect(
     // child classes must implement asSequence to avoid problems!
     override fun asSequence(): Sequence<Pattern> = getBranchCues().map { throw(NotImplementedError()) }
 
+    fun getCachedParentage() = this.selfNode.cachedParentage + listOf(this.selfNode)
+
     fun getBranchCues(): Sequence<Cue> = sequence {
         this@TreeSelect.selfNode.r(SelectDirection.RIGHT, "CUES_FIRST").n().first?.let {
             var branchCue = it as Cue?
@@ -33,7 +35,10 @@ open class TreeBranchesSelect(
 ):TreeSelect(context = context, selfNode=selfNode) {
 
     // TODO: handle branch hooks (eiter here or in tree)
-    override fun asSequence(): Sequence<Pattern> = getBranchCues().map { it.cuesPattern }
+    // TODO: test cached parentage
+    override fun asSequence(): Sequence<Pattern> = getBranchCues().map {
+        it.cuesPattern.apply { cachedParentage = this@TreeBranchesSelect.getCachedParentage() }
+    }
 
 }
 // ===========================================================================================================
@@ -45,7 +50,12 @@ open class TreeLeavesSelect(
 
     // TODO: handle branch hooks (eiter here or in tree)
     override fun asSequence(): Sequence<Leaf> = sequence {
-        this@TreeLeavesSelect.getBranchCues().forEach { yieldAll(it.cuesPattern.leaves.asTypedSequence()) }
+        // TODO: test cached parentage
+        this@TreeLeavesSelect.getBranchCues().forEach {
+            yieldAll(it.cuesPattern.apply {
+                cachedParentage = this@TreeLeavesSelect.getCachedParentage()
+            }.leaves.asTypedSequence())
+        }
     }
 }
 // ===========================================================================================================
@@ -57,9 +67,12 @@ open class TreeNodesSelect(
 
     // TODO: handle branch hooks (eiter here or in tree)
     override fun asSequence(): Sequence<Pattern> = sequence {
+        // TODO: test cached parentage
         yield(selfNode)
         this@TreeNodesSelect.getBranchCues().forEach {
-            yieldAll(it.cuesPattern.nodes.asTypedSequence())
+            yieldAll(it.cuesPattern.apply {
+                cachedParentage = this@TreeNodesSelect.getCachedParentage()
+            }.nodes.asTypedSequence())
         }
     }
 }

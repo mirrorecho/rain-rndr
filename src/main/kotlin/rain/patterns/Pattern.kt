@@ -17,6 +17,9 @@ interface Pattern: LanguageNode {
 
     val nodes: SelectInterface
 
+    // TODO: replace with a "CueContext" object
+    var cachedParentage: List<Tree>
+
     // TODO: implement
     // abstract val parents: SelectInterface
 
