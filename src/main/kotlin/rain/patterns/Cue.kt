@@ -20,6 +20,8 @@ open class Cue(
     override val label: LabelInterface get() = Cue.label
 
     val cuesPattern: Pattern get() = r(SelectDirection.RIGHT, "CUES").n().first as Pattern
+
+
 //    # # TO CONSIDER: would this be used?
 //    # if alter_node := self.altered_by:
 //    #     return alter_node.alter(pattern)

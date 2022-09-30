@@ -34,7 +34,7 @@ open class TreeBranchesSelect(
     selfNode: Tree,
 ):TreeSelect(context = context, selfNode=selfNode) {
 
-    // TODO: handle branch hooks (eiter here or in tree)
+    // TODO: handle branch hooks (either here or in tree)
     // TODO: test cached parentage
     override fun asSequence(): Sequence<Pattern> = getBranchCues().map {
         it.cuesPattern.apply { cachedParentage = this@TreeBranchesSelect.getCachedParentage() }
