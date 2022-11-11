@@ -16,6 +16,7 @@ class RelatedContext(
     val following = listOf<Pattern>()
     val siblings = listOf<Pattern>()
 
+    val parent: Pattern? = null
     val previous: Pattern? = null
     val next: Pattern? = null
 

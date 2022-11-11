@@ -22,6 +22,7 @@ open class Cell(
 
     override val isAlter = false
 
+    // TODO: rename to veinNames
     var traverseNames = listOf("dur", "machine")
 
     // the following probably not even needed since dur.sum() is so easy!
