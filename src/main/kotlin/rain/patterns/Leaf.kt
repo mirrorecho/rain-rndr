@@ -37,6 +37,7 @@ open class Leaf(
     override val branches = EmptySelect(context)
 
     // TODO: implement hook logic here
+    // ... and may need to change to a TreeSelfSelect here (in order to get TreeSelectContext)
     override val leaves get() = SelfSelect(context, this)
 
     override val nodes get() = SelfSelect(context, this)
