@@ -1,12 +1,13 @@
-package rain.language
+package rain.patterns
 
 import rain.interfaces.*
+import rain.language.Select
 import rain.patterns.*
 
 abstract class TreeSelect(
     context:ContextInterface,
     protected val selfNode: Tree,
-    ):Select(context = context) {
+    ): Select(context = context) {
 
     // TODO maybe... by lazy appropriate here? (assume yes)
     override val keys by lazy { asSequence().map{it.key}.toList() }
@@ -32,7 +33,7 @@ abstract class TreeSelect(
 open class TreeBranchesSelect(
     context:ContextInterface,
     selfNode: Tree,
-):TreeSelect(context = context, selfNode=selfNode) {
+): TreeSelect(context = context, selfNode=selfNode) {
 
     // TODO: handle branch hooks (either here or in tree)
     // TODO: test cached parentage
@@ -46,7 +47,7 @@ open class TreeBranchesSelect(
 open class TreeLeavesSelect(
     context:ContextInterface,
     selfNode: Tree,
-):TreeSelect(context = context, selfNode=selfNode) {
+): TreeSelect(context = context, selfNode=selfNode) {
 
     // TODO: handle branch hooks (eiter here or in tree)
     override fun asSequence(): Sequence<Leaf> = sequence {
@@ -63,7 +64,7 @@ open class TreeLeavesSelect(
 open class TreeNodesSelect(
     context:ContextInterface,
     selfNode: Tree,
-):TreeSelect(context = context, selfNode=selfNode) {
+): TreeSelect(context = context, selfNode=selfNode) {
 
     // TODO: handle branch hooks (eiter here or in tree)
     override fun asSequence(): Sequence<Pattern> = sequence {

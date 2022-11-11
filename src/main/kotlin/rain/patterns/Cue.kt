@@ -19,7 +19,14 @@ open class Cue(
     }
     override val label: LabelInterface get() = Cue.label
 
+    // TODO: these all need tests!
+    // also TODO: should these be by lazy?
+
     val cuesPattern: Pattern get() = r(SelectDirection.RIGHT, "CUES").n().first as Pattern
+
+    val cuesNextPattern: Pattern get() = r(SelectDirection.RIGHT, "CUES_NEXT").n().r(SelectDirection.RIGHT, "CUES").n().first as Pattern
+
+    val cuesPrevPattern: Pattern get() = r(SelectDirection.LEFT, "CUES_NEXT").n().r(SelectDirection.RIGHT, "CUES").n().first as Pattern
 
 
 //    # # TO CONSIDER: would this be used?
