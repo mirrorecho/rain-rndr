@@ -9,7 +9,7 @@ interface Pattern: LanguageNode {
 
     val isAlter: Boolean
 
-    val  isLeaf: Boolean
+    val isLeaf: Boolean
 
     val branches: SelectInterface
 
