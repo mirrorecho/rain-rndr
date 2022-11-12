@@ -18,7 +18,7 @@ interface Pattern: LanguageNode {
     val nodes: SelectInterface
 
     // TODO - think about this implementation:
-    // ... should relatecContext be cached here? what about multiple cues to the same pattern?
+    // ... should relatedContext be cached here? what about multiple cues to the same pattern?
     // maybe it should should be a dict with cues as keys?
     // or maybe it should be tied to the cue instead?
     var relatedContext: RelatedContext?

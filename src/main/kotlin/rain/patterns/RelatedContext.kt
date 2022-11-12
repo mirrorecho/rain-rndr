@@ -6,7 +6,9 @@ package rain.patterns
 
 class RelatedContext(
     val cue: Cue,
-    val ancestors: List<Pattern> // trees or alters
+    // TODO: which of the following make more sense?
+    val ancestors: List<Pattern>, // trees or alters
+    val ancestorCues: List<Cue>
 ) {
 
     val aunts = listOf<Pattern>()
