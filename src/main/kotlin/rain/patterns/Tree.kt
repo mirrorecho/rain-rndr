@@ -33,7 +33,11 @@ open class Tree(
 
     override val leaves: TreeLeavesSelect get() = TreeLeavesSelect(context, this)
 
-    override var cachedParentage = listOf<Tree>()
+    // replaced with cuePath below
+//    override var cachedParentage = listOf<Tree>()
+
+    // set to an instance of CuePath if this node is created in the context of a TreeSelect
+    var cuePath: CuePath? = null
 
     val isEmpty: Boolean get() = r(SelectDirection.RIGHT, "CUES_FIRST").first == null
 

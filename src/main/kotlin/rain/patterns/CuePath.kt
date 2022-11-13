@@ -4,11 +4,11 @@ package rain.patterns
 // OR MAYBE NOT, because that doesn't take into account the ancestors
 // WHERE SHOULD THIS LIVE????
 
-class RelatedContext(
-    val cue: Cue,
+class CuePath(
+    val cue: Cue, // needed? (probably not, but also probably simplifieds things
     // TODO: which of the following make more sense?
     val ancestors: List<Pattern>, // trees or alters
-    val ancestorCues: List<Cue>
+//    val ancestorCues: List<Cue> // needed?
 ) {
 
     val aunts = listOf<Pattern>()
