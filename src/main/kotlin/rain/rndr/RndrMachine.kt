@@ -10,12 +10,16 @@ import rain.machines.Machine
 import rain.patterns.*
 import kotlin.random.Random
 
+// think of RndrMachine kind of like an sc SynthDef ... it's a blueprint,
+// that also implements the rain Machine interface... triggering the machine
+// creates a new instance of a running machine instance
 abstract class RndrMachine(
     key:String = rain.utils.autoKey(),
     properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
 ): Machine, Leaf(key, properties, context) {
 
+    // TODO: naming? (since "Instance" has it's own OOP meaning)
     open class MachineInstance(
         open val machine: RndrMachine,
         val program: Program, // TODO: needed?

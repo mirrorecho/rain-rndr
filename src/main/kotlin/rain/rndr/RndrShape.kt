@@ -14,6 +14,10 @@ import rain.language.LocalContext
 import kotlin.random.Random
 
 interface ShapeInterfcae {
+
+    // any shape class (whether a machine, machine instance, or instance animation
+    // would implement this interface with these properties...
+
     var fillH: Double?
     var fillS: Double?
     var fillV: Double?
@@ -50,6 +54,14 @@ abstract class RndrShape (
     context: ContextInterface = LocalContext,
 ): RndrMachine(key, properties, context), ShapeInterfcae {
 
+    // any shape machine node in the tree of possible machines
+    // each object being equivalent to a "SynthDef" in sc and can be triggered
+    // (with the class itself being a way to create
+    // a bunch of machines (defs)
+
+    // below are the values for the machine blueprint
+    // ... effectively defaults for any machine instance created with this blueprint
+
     override var fillH: Double? by this.properties
     override var fillS: Double? by this.properties
     override var fillV: Double? by this.properties
@@ -63,14 +75,15 @@ abstract class RndrShape (
     override var x: Double? by this.properties
     override var y: Double? by this.properties
 
-
     // TODO: standard logic to trigger new animation with existing machine instance
 
     open class MachineInstance(
-        override val machine: Circle,
+        override val machine: RndrShape,
         program: Program,
         properties: MutableMap<String, Any?>,
     ): RndrMachine.MachineInstance(machine, program, properties), ShapeInterfcae {
+
+
 
         override var fillH: Double? by this.properties
         override var fillS: Double? by this.properties
@@ -86,21 +99,26 @@ abstract class RndrShape (
         override var y: Double? by this.properties
 
         open class InstanceAnimation : Animatable(), ShapeInterfcae {
-            override var fillH: Double? = null
-            override var fillS: Double? = null
-            override var fillV: Double? = null
-            override var fillA: Double? = null
 
-            override var strokeH: Double? = null
-            override var strokeS: Double? = null
-            override var strokeV: Double? = null
-            override var strokeA: Double? = null
+            // these are the values that actually change over time
+            // NOTE: cannot use ? types here (don't work with animation interface)
 
-            override var x: Double? = null
-            override var y: Double? = null
+            override var fillH: Double = null
+            override var fillS: Double = null
+            override var fillV: Double = null
+            override var fillA: Double = null
+
+            override var strokeH: Double = null
+            override var strokeS: Double = null
+            override var strokeV: Double = null
+            override var strokeA: Double = null
+
+            override var x: Double = null
+            override var y: Double = null
         }
 
         open val animation = InstanceAnimation()
+
 
         open fun animate() {
             this.program.apply {
@@ -162,9 +180,9 @@ open class Circle(
             super.render()
 
             this.program.apply {
-                animatedCircle.updateAnimation()
-                if (!animatedCircle.hasAnimations()) {
-                    animatedCircle.apply {
+                animation.updateAnimation()
+                if (!animation.hasAnimations()) {
+                    animation.apply {
                         ::x.animate(width.toDouble(), 1000, Easing.CubicInOut)
                         ::x.complete()
                         ::x.animate(0.0, 1000, Easing.CubicInOut)
@@ -173,7 +191,8 @@ open class Circle(
                 }
                 drawer.fill = fill
                 drawer.stroke = stroke
-                drawer.circle(animatedCircle.x, height / 2.0, radius)
+                // TODO: are these defaults OK?
+                drawer.circle(animation.x ?: 0.0, animation.y ?: 0.0, animation.radius ?: 90.0)
             }
         }
     }

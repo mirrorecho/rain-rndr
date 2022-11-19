@@ -42,6 +42,6 @@ open class Leaf(
 
     override val nodes get() = SelfSelect(context, this)
 
-    override var cachedParentage = listOf<Tree>()
+    override var cuePath: CuePath? = null
 
 }

@@ -53,7 +53,8 @@ open class Cell(
     override val veins: Sequence<MutableMap<String, Any?>> get() = sequence {
         var returning = true
         val namesIterators: List<Pair<String, Iterator<Any?>>> = traverseNames.map {
-            Pair(it, this@Cell.getAs<Sequence<*>>(it).iterator())
+            if (cuePath == null) Pair(it, this@Cell.getAs<Sequence<*>>(it).iterator())
+            else Pair(it, (this@Cell.propertiesWithHeritage[it] as Sequence<*>).iterator())
         }
         while (returning) {
             val returnMap = mutableMapOf<String, Any?>()
@@ -64,6 +65,5 @@ open class Cell(
             if (returning) yield(returnMap)
         }
     }
-
 
 }

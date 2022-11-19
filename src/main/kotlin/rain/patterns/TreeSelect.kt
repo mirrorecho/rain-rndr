@@ -15,7 +15,7 @@ abstract class TreeSelect(
     // child classes must implement asSequence to avoid problems!
     override fun asSequence(): Sequence<Pattern> = getBranchCues().map { throw(NotImplementedError()) }
 
-    fun getCachedParentage() = this.selfNode.cachedParentage + listOf(this.selfNode)
+    fun getAncestors() = this.selfNode.cuePath?.ancestors.orEmpty() + listOf(this.selfNode)
 
     fun getBranchCues(): Sequence<Cue> = sequence {
         this@TreeSelect.selfNode.r(SelectDirection.RIGHT, "CUES_FIRST").n().first?.let {
@@ -27,6 +27,14 @@ abstract class TreeSelect(
             }
         }
     }
+
+    fun getBranches(): Sequence<Pattern> = getBranchCues().map {
+        // TODO: handle branch hooks
+        // TODO: test cuesPattern ancestors
+        it.cuesPattern.apply {
+            this.cuePath = CuePath(it, this@TreeSelect.getAncestors())
+        }
+    }
 }
 // ===========================================================================================================
 
@@ -35,11 +43,7 @@ open class TreeBranchesSelect(
     selfNode: Tree,
 ): TreeSelect(context = context, selfNode=selfNode) {
 
-    // TODO: handle branch hooks (either here or in tree)
-    // TODO: test cached parentage
-    override fun asSequence(): Sequence<Pattern> = getBranchCues().map {
-        it.cuesPattern.apply { cachedParentage = this@TreeBranchesSelect.getCachedParentage() }
-    }
+    override fun asSequence(): Sequence<Pattern> = getBranches()
 
 }
 // ===========================================================================================================
@@ -49,13 +53,9 @@ open class TreeLeavesSelect(
     selfNode: Tree,
 ): TreeSelect(context = context, selfNode=selfNode) {
 
-    // TODO: handle branch hooks (eiter here or in tree)
     override fun asSequence(): Sequence<Leaf> = sequence {
-        // TODO: test cached parentage
-        this@TreeLeavesSelect.getBranchCues().forEach {
-            yieldAll(it.cuesPattern.apply {
-                cachedParentage = this@TreeLeavesSelect.getCachedParentage()
-            }.leaves.asTypedSequence())
+        this@TreeLeavesSelect.getBranches().forEach {
+            yieldAll(it.leaves.asTypedSequence())
         }
     }
 }
@@ -66,14 +66,10 @@ open class TreeNodesSelect(
     selfNode: Tree,
 ): TreeSelect(context = context, selfNode=selfNode) {
 
-    // TODO: handle branch hooks (eiter here or in tree)
     override fun asSequence(): Sequence<Pattern> = sequence {
-        // TODO: test cached parentage
         yield(selfNode)
-        this@TreeNodesSelect.getBranchCues().forEach {
-            yieldAll(it.cuesPattern.apply {
-                cachedParentage = this@TreeNodesSelect.getCachedParentage()
-            }.nodes.asTypedSequence())
+        this@TreeNodesSelect.getBranches().forEach {
+            yieldAll(it.nodes.asTypedSequence())
         }
     }
 }

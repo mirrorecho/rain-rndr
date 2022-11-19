@@ -3,9 +3,7 @@ package rain.patterns
 import rain.interfaces.*
 import rain.language.*
 
-// a node that represents an iterable over a group nodes ... each of which is connected
-// to this node, in a "pattern"
-// TODO maybe: is Pattern really an interface
+
 open class Tree(
     key:String = rain.utils.autoKey(),
     properties: Map<String, Any?> = mapOf(),
@@ -33,11 +31,10 @@ open class Tree(
 
     override val leaves: TreeLeavesSelect get() = TreeLeavesSelect(context, this)
 
+    override var cuePath: CuePath? = null
+
     // replaced with cuePath below
 //    override var cachedParentage = listOf<Tree>()
-
-    // set to an instance of CuePath if this node is created in the context of a TreeSelect
-    var cuePath: CuePath? = null
 
     val isEmpty: Boolean get() = r(SelectDirection.RIGHT, "CUES_FIRST").first == null
 
@@ -100,12 +97,12 @@ open class CellTree(
 
     override val label: LabelInterface get() = CellTree.label
 
+    // TODO maybe: should the default veins NOT include heritage? (and then create a separate veinsWithHeritage?)
+    // ... assume NO, that the below is fine
     override val veins: Sequence<MutableMap<String, Any?>> get() = sequence {
-        // TODO: use cueContext to propogate parentage properties to veins
+        // TODO: use cuePath to propogate parentage properties to veins
         leaves.asTypedSequence<Cell>().forEach { c->
-            yieldAll( c.veins.map {
-                it.u
-            } )
+            yieldAll( c.veins )
         }
     }
 

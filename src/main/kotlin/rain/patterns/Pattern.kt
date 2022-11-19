@@ -4,7 +4,6 @@ import rain.interfaces.*
 
 // a node that represents an iterable over a group nodes ... each of which is connected
 // to this node, in a "pattern"
-// TODO maybe: is Pattern really an interface
 interface Pattern: LanguageNode {
 
     val isAlter: Boolean
@@ -17,11 +16,8 @@ interface Pattern: LanguageNode {
 
     val nodes: SelectInterface
 
-    // TODO - think about this implementation:
-    // ... should relatedContext be cached here? what about multiple cues to the same pattern?
-    // maybe it should should be a dict with cues as keys?
-    // or maybe it should be tied to the cue instead?
-    var relatedContext: CuePath?
+    // set to an instance of CuePath if this node is created in the context of a TreeSelect
+    var cuePath: CuePath?
 
     // TODO: implement
     // abstract val parents: SelectInterface
@@ -44,6 +40,14 @@ interface CellPattern:Pattern {
     var simultaneous: Boolean
 
     val veins: Sequence<MutableMap<String, Any?>>
+
+    // TODO: naming?
+    // TOD: testing!
+    val propertiesWithHeritage: Map<String, Any?>
+        get() {
+            //TODO: below assumes that all ancestor properties should carry down... are we sure that's what we want?
+            return this.properties.toMutableMap().apply { this.putAll( cuePath?.properties.orEmpty() ) }
+        }
 
     fun <T>propertyByVein(key: String): Sequence<T> = veins.map { it[key] as T }
 

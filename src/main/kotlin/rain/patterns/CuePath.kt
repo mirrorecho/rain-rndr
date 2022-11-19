@@ -5,7 +5,7 @@ package rain.patterns
 // WHERE SHOULD THIS LIVE????
 
 class CuePath(
-    val cue: Cue, // needed? (probably not, but also probably simplifieds things
+    val cue: Cue, // needed? (probably not, but also probably simplifies things
     // TODO: which of the following make more sense?
     val ancestors: List<Pattern>, // trees or alters
 //    val ancestorCues: List<Cue> // needed?
@@ -16,9 +16,16 @@ class CuePath(
     val following = listOf<Pattern>()
     val siblings = listOf<Pattern>()
 
-    val parent: Pattern? = null
+    val parent: Pattern? = ancestors.lastOrNull()
+    val root: Pattern? = ancestors.firstOrNull()
     val previous: Pattern? = null
     val next: Pattern? = null
+
+    val properties: MutableMap<String, Any?> by lazy {
+        val returnMap = parent?.properties.orEmpty().toMutableMap()
+        parent?.cuePath?.let { returnMap.putAll(it.properties) }
+        returnMap
+    }
 
     fun yo() {
         this.following
