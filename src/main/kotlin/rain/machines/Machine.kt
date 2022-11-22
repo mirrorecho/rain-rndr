@@ -10,6 +10,8 @@ interface Machine: LanguageNode {
 
     fun render() { throw NotImplementedError() }
 
+    // NOTE: trigger is key here... it's what fundamentally makes a machine a machine
+    // ... i.e. a machine is something that's "trigger-able"
     // TODO maybe use playerContext object (instead of just runningTime)
     fun trigger(runningTime:Double, properties: Map<String, Any?>) { throw NotImplementedError() }
 

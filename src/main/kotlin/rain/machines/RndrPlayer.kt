@@ -74,11 +74,6 @@ class RndrPlayer(
         var prevTriggerTime = 0.0
         println(triggers.toSortedMap())
 
-        val animation = object : Animatable() {
-            var x: Double = 0.0
-        }
-
-        var myColor = ColorRGBa.PINK
 
         program {
 
@@ -90,10 +85,11 @@ class RndrPlayer(
                     launch {
                         triggerList.forEach { p ->
                             val machine = this@RndrPlayer.machinePalette[p["machine"] as String]
-                            val instance = machine.triggerOn(triggerTime, this@program, p)
+                            val op = machine.triggerOn(triggerTime, this@program, p)
                             launch {
-                                delay((instance.dur).toDuration(DurationUnit.SECONDS))
-                                machine.triggerOff(instance)
+                                // TODO: consider accommodating ops with indeterminate durs...
+                                delay((op.dur).toDuration(DurationUnit.SECONDS))
+                                machine.triggerOff(op)
                             }
                         }
                     }

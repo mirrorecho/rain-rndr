@@ -13,23 +13,24 @@ import rain.language.Label
 import rain.language.LocalContext
 import kotlin.random.Random
 
-interface ShapeInterfcae {
+interface ShapeInterface {
 
     // any shape class (whether a machine, machine instance, or instance animation
     // would implement this interface with these properties...
 
-    var fillH: Double?
-    var fillS: Double?
-    var fillV: Double?
-    var fillA: Double?
 
-    var strokeH: Double?
-    var strokeS: Double?
-    var strokeV: Double?
-    var strokeA: Double?
+    var fillH: Double
+    var fillS: Double
+    var fillV: Double
+    var fillA: Double
 
-    var x: Double?
-    var y: Double?
+    var strokeH: Double
+    var strokeS: Double
+    var strokeV: Double
+    var strokeA: Double
+
+    var x: Double
+    var y: Double
 
     val position: Vector2 get() = Vector2(x!!, y!!)
 
@@ -45,14 +46,14 @@ interface ShapeInterfcae {
             return ColorHSVa(strokeH ?: 0.0, strokeS ?: 0.9, strokeV ?: 0.9, strokeA ?: 1.0).toRGBa()
         } else return null
     }
-
 }
+
 
 abstract class RndrShape (
     key:String = rain.utils.autoKey(),
     properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
-): RndrMachine(key, properties, context), ShapeInterfcae {
+): RndrMachine(key, properties, context), ShapeInterface {
 
     // any shape machine node in the tree of possible machines
     // each object being equivalent to a "SynthDef" in sc and can be triggered
@@ -62,80 +63,81 @@ abstract class RndrShape (
     // below are the values for the machine blueprint
     // ... effectively defaults for any machine instance created with this blueprint
 
-    override var fillH: Double? by this.properties
-    override var fillS: Double? by this.properties
-    override var fillV: Double? by this.properties
-    override var fillA: Double? by this.properties
+    override val poly: Boolean by this.properties.apply { putIfAbsent("poly", true) } // TODO: implement
 
-    override var strokeH: Double? by this.properties
-    override var strokeS: Double? by this.properties
-    override var strokeV: Double? by this.properties
-    override var strokeA: Double? by this.properties
+    override var fillH: Double by this.properties.apply { putIfAbsent("radius", 90.0) }
+    override var fillS: Double by this.properties.apply { putIfAbsent("radius", 0.5) }
+    override var fillV: Double by this.properties.apply { putIfAbsent("radius", 0.5) }
+    override var fillA: Double by this.properties.apply { putIfAbsent("radius", 0.2) }
 
-    override var x: Double? by this.properties
-    override var y: Double? by this.properties
+    override var strokeH: Double by this.properties.apply { putIfAbsent("radius", 90.0) }
+    override var strokeS: Double by this.properties.apply { putIfAbsent("radius", 0.5) }
+    override var strokeV: Double by this.properties.apply { putIfAbsent("radius", 0.5) }
+    override var strokeA: Double by this.properties.apply { putIfAbsent("radius", 1.0) }
 
-    // TODO: standard logic to trigger new animation with existing machine instance
+    override var x: Double by this.properties.apply { putIfAbsent("x", 0.5) }
+    override var y: Double by this.properties.apply { putIfAbsent("v", 0.5) }
 
-    open class MachineInstance(
-        override val machine: RndrShape,
-        program: Program,
-        properties: MutableMap<String, Any?>,
-    ): RndrMachine.MachineInstance(machine, program, properties), ShapeInterfcae {
+    // TODO: standard logic to trigger new animation with existing machine instance?
+//    override fun opFactory(machine: RndrMachine=this, program: Program, properties: MutableMap<String, Any?>): RndrAnimation {
+//        return ...
+//    }
 
+//    abstract val animation: RndrAnimation
 
+    // TODO: assume OK to not do anything with animation here?
+//    open fun animate() {
+//        this.program.apply {
+//            this@RndrShape.ops.forEach {it as RndrAnimation
+//                if (it.running && it.hasAnimations()) { // TODO: is it even necessary to test for hasAnimations?
+//                    it.animate()
+//                }
+//            }
+//        }
+//    }
 
-        override var fillH: Double? by this.properties
-        override var fillS: Double? by this.properties
-        override var fillV: Double? by this.properties
-        override var fillA: Double? by this.properties
+}
 
-        override var strokeH: Double? by this.properties
-        override var strokeS: Double? by this.properties
-        override var strokeV: Double? by this.properties
-        override var strokeA: Double? by this.properties
+open class RndrAnimationOp(
+    override val machine: RndrShape,
+    override val program: Program,
+    val properties: MutableMap<String, Any?>, // TODO: reconsider using properties?
 
-        override var x: Double? by this.properties
-        override var y: Double? by this.properties
+): RndrOp, ShapeInterface, Animatable() {
+    // TODO: naming?
+    var op: String by this.properties.apply { if (machine.poly) putIfAbsent("op", rain.utils.autoKey()) else machine.key }
 
-        open class InstanceAnimation : Animatable(), ShapeInterfcae {
+    override var fillH: Double by this.properties
+    override var fillS: Double by this.properties
+    override var fillV: Double by this.properties
+    override var fillA: Double by this.properties
 
-            // these are the values that actually change over time
-            // NOTE: cannot use ? types here (don't work with animation interface)
+    override var strokeH: Double by this.properties
+    override var strokeS: Double by this.properties
+    override var strokeV: Double by this.properties
+    override var strokeA: Double by this.properties
 
-            override var fillH: Double = null
-            override var fillS: Double = null
-            override var fillV: Double = null
-            override var fillA: Double = null
+    override var x: Double by this.properties // measured from 0 to 1 L to R
+    override var y: Double by this.properties
 
-            override var strokeH: Double = null
-            override var strokeS: Double = null
-            override var strokeV: Double = null
-            override var strokeA: Double = null
+    override var dur: Double by this.properties
 
-            override var x: Double = null
-            override var y: Double = null
-        }
+    override var running: Boolean = true // or should this be false?
 
-        open val animation = InstanceAnimation()
-
-
-        open fun animate() {
-            this.program.apply {
-                animation.updateAnimation()
-                if (!animation.hasAnimations()) {
-                    animation.apply {
-                        ::x.animate(width.toDouble(), 1000, Easing.CubicInOut)
-                        ::x.complete()
-                        ::x.animate(0.0, 1000, Easing.CubicInOut)
-                        ::x.complete()
-                    }
-                }
+    override fun render() {
+        super.render()
+        this.updateAnimation()
+        if (this.hasAnimations()) {
+            this.apply {
+//                ::x.animate(width.toDouble(), 1000, Easing.CubicInOut)
+//                ::x.complete()
+//                ::x.animate(0.0, 1000, Easing.CubicInOut)
+//                ::x.complete()
             }
+        } else {
+            // TODO: check and set new animations here??
         }
-
     }
-
 }
 
 
@@ -156,49 +158,39 @@ open class Circle(
 
     override val label: LabelInterface get() = Circle.label
 
-    override fun instanceFactory(machine: RndrMachine, program: Program, properties: MutableMap<String, Any?>): MachineInstance {
-        return MachineInstance(machine as Circle, program, properties)
+    override fun opFactory(machine: RndrMachine, program: Program, properties: MutableMap<String, Any?>): RndrOp {
+        return CircleOp(machine as Circle, program, properties.toMutableMap())
     }
 
     var radius: Double by this.properties.apply { putIfAbsent("radius", 200.0) }
 
-    class MachineInstance(
+
+    class CircleOp(
         override val machine: Circle,
         program: Program,
         properties: MutableMap<String, Any?>,
-    ): RndrShape.MachineInstance(machine, program, properties) {
+    ): RndrAnimationOp(machine, program, properties) {
 
         var radius: Double by this.properties
-
-        class CicleAnimation : RndrShape.MachineInstance.InstanceAnimation() {
-            var radius: Double? = null
-        }
-
-        override val animation = CicleAnimation()
 
         override fun render() {
             super.render()
 
             this.program.apply {
-                animation.updateAnimation()
-                if (!animation.hasAnimations()) {
-                    animation.apply {
-                        ::x.animate(width.toDouble(), 1000, Easing.CubicInOut)
-                        ::x.complete()
-                        ::x.animate(0.0, 1000, Easing.CubicInOut)
-                        ::x.complete()
-                    }
-                }
+//                if (!animation.hasAnimations()) {
+//                    animation.apply {
+//                        ::x.animate(width.toDouble(), 1000, Easing.CubicInOut)
+//                        ::x.complete()
+//                        ::x.animate(0.0, 1000, Easing.CubicInOut)
+//                        ::x.complete()
+//                    }
+//                }
                 drawer.fill = fill
                 drawer.stroke = stroke
                 // TODO: are these defaults OK?
-                drawer.circle(animation.x ?: 0.0, animation.y ?: 0.0, animation.radius ?: 90.0)
+                drawer.circle(x, y, radius)
             }
         }
     }
-
-
-
-
 
 }
