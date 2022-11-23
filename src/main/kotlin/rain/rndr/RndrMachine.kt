@@ -97,7 +97,8 @@ abstract class RndrMachine(
 
         // TODO: naming? and this is a nasty way to deal with poly...
         val opName: String = if (this.poly) properties["name"] as String? ?: rain.utils.autoKey() else this.key
-        val combinedProperties = properties.toMutableMap().apply {putAll(properties)}
+
+        val combinedProperties = this.properties.toMutableMap().apply {putAll(properties)}
 
         return (ops.getOrPut(opName)
             {opFactory(this, program, combinedProperties).start()}

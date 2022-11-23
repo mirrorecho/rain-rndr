@@ -13,7 +13,9 @@ import rain.language.ItemCompanion
 import rain.language.Label
 import rain.language.LocalContext
 import kotlin.random.Random
+import kotlin.reflect.KCallable
 import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
 interface ShapeInterface {
@@ -35,7 +37,7 @@ interface ShapeInterface {
     var x: Double
     var y: Double
 
-    val position: Vector2 get() = Vector2(x!!, y!!)
+    val position: Vector2 get() = Vector2(x, y)
 
     val fill: ColorRGBa? get() {
         Easing.None
@@ -68,18 +70,18 @@ abstract class RndrShape (
 
     override val poly: Boolean by this.properties.apply { putIfAbsent("poly", true) } // TODO: implement
 
-    override var fillH: Double by this.properties.apply { putIfAbsent("radius", 90.0) }
-    override var fillS: Double by this.properties.apply { putIfAbsent("radius", 0.5) }
-    override var fillV: Double by this.properties.apply { putIfAbsent("radius", 0.5) }
-    override var fillA: Double by this.properties.apply { putIfAbsent("radius", 0.2) }
+    override var fillH: Double by this.properties.apply { putIfAbsent("fillH", 90.0) }
+    override var fillS: Double by this.properties.apply { putIfAbsent("fillS", 0.5) }
+    override var fillV: Double by this.properties.apply { putIfAbsent("fillV", 0.5) }
+    override var fillA: Double by this.properties.apply { putIfAbsent("fillA", 0.2) }
 
-    override var strokeH: Double by this.properties.apply { putIfAbsent("radius", 90.0) }
-    override var strokeS: Double by this.properties.apply { putIfAbsent("radius", 0.5) }
-    override var strokeV: Double by this.properties.apply { putIfAbsent("radius", 0.5) }
-    override var strokeA: Double by this.properties.apply { putIfAbsent("radius", 1.0) }
+    override var strokeH: Double by this.properties.apply { putIfAbsent("strokeH", 90.0) }
+    override var strokeS: Double by this.properties.apply { putIfAbsent("strokeS", 0.5) }
+    override var strokeV: Double by this.properties.apply { putIfAbsent("strokeV", 0.5) }
+    override var strokeA: Double by this.properties.apply { putIfAbsent("strokeA", 1.0) }
 
     override var x: Double by this.properties.apply { putIfAbsent("x", 0.5) }
-    override var y: Double by this.properties.apply { putIfAbsent("v", 0.5) }
+    override var y: Double by this.properties.apply { putIfAbsent("y", 0.5) }
 
     // TODO: standard logic to trigger new animation with existing machine instance?
 //    override fun opFactory(machine: RndrMachine=this, program: Program, properties: MutableMap<String, Any?>): RndrAnimation {
@@ -107,55 +109,109 @@ open class RndrAnimationOp(
     val properties: MutableMap<String, Any?>, // TODO: reconsider using properties?
 
 ): RndrOp, ShapeInterface, Animatable() {
-    // TODO: naming? and this is a nasty way to deal with poly...
-    override var name: String by this.properties.apply { if (machine.poly) putIfAbsent("op", rain.utils.autoKey()) else machine.key }
 
-    override var fillH: Double by this.properties
-    override var fillS: Double by this.properties
-    override var fillV: Double by this.properties
-    override var fillA: Double by this.properties
+    override var name: String by this.properties.apply {
+        // TODO: naming? and this is a nasty way to deal with poly...
+//      putIfAbsent("name", if (machine.poly) rain.utils.autoKey() else this@RndrAnimationOp.machine.key)
 
-    override var strokeH: Double by this.properties
-    override var strokeS: Double by this.properties
-    override var strokeV: Double by this.properties
-    override var strokeA: Double by this.properties
+        // TODO: ignoring poly for now
+        putIfAbsent("name", rain.utils.autoKey() )
+    }
 
-    override var x: Double by this.properties // measured from 0 to 1 L to R
-    override var y: Double by this.properties
+    // NOTE... by this.properties doesn't seem to work here with the animation
 
-    val animatableProperties = mutableListOf( // TODO: consider non-mutable list
-        "fillH", "fillS", "fillV", "fillA", "strokeH", "strokeV", "strokeA", "x", "v"
-    )
+    val animatableMap = mutableMapOf<String, KMutableProperty0<Double>>()
+
+    override var fillH: Double = 0.0
+    override var fillS: Double = 0.0
+    override var fillV: Double = 1.0
+    override var fillA: Double = 1.0
+
+    override var strokeH: Double = 0.0
+    override var strokeS: Double = 0.0
+    override var strokeV: Double = 1.0
+    override var strokeA: Double = 1.0
+
+    override var x: Double = 0.0 // measured from 0 to 1 L to R
+    override var y: Double = 0.0
+
+    fun initAnimatedProperty(kProperty: KMutableProperty0<Double>) {
+//        animatableMap[kProperty.name] = kProperty
+//        return properties[kProperty.name] as Double? ?: 0.0
+//        this.properties[kProperty.name]?.run { kProperty.animate(this as Double, 0.001.toLong()) }
+        this.properties[kProperty.name]?.run { kProperty.set(this as Double) }
+//        kProperty.
+
+    }
+
+    fun animatedDefault(key:String, fallbackDefault: Double=0.0) = properties[key] as Double? ?: fallbackDefault
+
+
+    init {
+        initAnimatedProperties(
+            ::fillH,
+            ::fillS,
+            ::fillV,
+            ::fillA,
+            ::strokeH,
+            ::strokeS,
+            ::strokeV,
+            ::strokeA,
+            ::x,
+            ::y,
+        )
+    }
+
+    fun initAnimatedProperties(vararg kProperties: KMutableProperty0<Double>) {
+        kProperties.forEach {
+            animatableMap[it.name] = it
+//            this.properties[it.name]?.run { it.animate(this as Double, 0.001.toLong()) }
+        }
+    }
 
     override var dur: Double by this.properties
 
     override var running: Boolean = true // or should this be false?
 
+
     // TODO: add easing
 
     override fun reTrigger(properties: Map<String, Any?>) {
+        println(this.machine.key + ": " + properties)
         properties.forEach {
-            if (it.key in animatableProperties) {
+            if (it.key in animatableMap.keys) {
                 // TODO: this is a little wonky... able to simplify?
                 // .. see https://stackoverflow.com/questions/35525122/kotlin-data-class-how-to-read-the-value-of-property-if-i-dont-know-its-name-at
-                this.animate( this::class.members.first { m-> m.name == it.key } as KMutableProperty0<Double>, it.value as Double, (dur * 1000.0).toLong()) // TODO: add easing
+//                this::class.memberProperties
+//                this.javaClass.kotlin.members.first { m-> m.name == it.key }
+//                this.animate( this::class.members.first { m-> m.name == it.key }, it.value as Double, (dur * 1000.0).toLong()) // TODO: add easing
+//                println(it.key  +": " + animatableMap[it.key]!!.name)
+//                this.animate(animatableMap[it.key]!!, it.value as Double, (dur * 1000.0).toLong())
+                animatableMap[it.key]!!.animate(it.value as Double, (dur * 1000.0).toLong())
             }
         }
     }
 
+    var renderedOnce = false
+    fun renderOnce() {
+//        initAnimatedProperty(::x)
+//        renderedOnce = true
+    }
+
     override fun render() {
+        if (!renderedOnce) renderOnce()
         super.render()
         this.updateAnimation()
-        if (this.hasAnimations()) {
-            this.apply {
-//                ::x.animate(width.toDouble(), 1000, Easing.CubicInOut)
-//                ::x.complete()
-//                ::x.animate(0.0, 1000, Easing.CubicInOut)
-//                ::x.complete()
-            }
-        } else {
-            // TODO: check and set new animations here??
-        }
+//        if (this.hasAnimations()) {
+//            this.apply {
+////                ::x.animate(width.toDouble(), 1000, Easing.CubicInOut)
+////                ::x.complete()
+////                ::x.animate(0.0, 1000, Easing.CubicInOut)
+////                ::x.complete()
+//            }
+//        } else {
+//            // TODO: check and set new animations here??
+//        }
     }
 }
 
@@ -190,10 +246,17 @@ open class Circle(
         properties: MutableMap<String, Any?>,
     ): RndrAnimationOp(machine, program, properties) {
 
-        var radius: Double by this.properties
+        var radius: Double = 0.0
+
+        init {
+            animatableMap.putAll(mapOf(
+                "radius" to ::radius,
+            ))
+        }
 
         override fun render() {
             super.render()
+
 
             this.program.apply {
 //                if (!animation.hasAnimations()) {
@@ -207,7 +270,7 @@ open class Circle(
                 drawer.fill = fill
                 drawer.stroke = stroke
                 // TODO: are these defaults OK?
-                drawer.circle(x, y, radius)
+                drawer.circle(x * program.width, y * program.height, radius)
             }
         }
     }

@@ -64,8 +64,8 @@ fun main() {
 //    println("-----------------------------------------------------------")
     // create machines with machine defaults
 
-    Circle("BIG_CIRCLE", mapOf("radius" to 200.0)).createMe()
-    Circle("SMALL_CIRCLE", mapOf("radius" to 90.0)).createMe()
+    Circle("BIG_CIRCLE", mapOf("radius" to 10.0, "x" to 1.0, "y" to 0.0)).createMe()
+    Circle("SMALL_CIRCLE", mapOf("radius" to 2.0)).createMe()
 
     println("-----------------------------------------------------------")
     // create the cell patterns that trigger the machines
@@ -74,14 +74,16 @@ fun main() {
 //        mapOf("simultaneous" to true)
     )
     c1.dur = sequenceOf(4.0, 2.0, 1.0)
+    c1.properties["radius"] = sequenceOf(400.0, 300.0, 10.0)
     c1.properties["fillH"] = sequenceOf(0.0, 200.0) // TODO: simplify as c1.setProperty("vHSV", 0.9, 0.4, 0.4)
     c1.machine = cycleOf("BIG_CIRCLE")
     c1.properties["name"] = cycleOf("C1")
     c1.properties["x"] = sequenceOf(0.1, 0.9, 0.4)
+    c1.properties["y"] = sequenceOf(0.1, 0.1, 0.1)
     c1.createMe()
 
     val c2 = Cell("C2")
-    c2.dur = sequenceOf(3.0, 1.0, 0.5)
+    c2.dur = sequenceOf(1.0)
     c2.machine = cycleOf("SMALL_CIRCLE")
     c2.properties["name"] = cycleOf("C2")
     c2.createMe()
