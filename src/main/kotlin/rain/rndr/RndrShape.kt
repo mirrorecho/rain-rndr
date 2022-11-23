@@ -5,6 +5,7 @@ import org.openrndr.animatable.Animatable
 import org.openrndr.animatable.easing.Easing
 import org.openrndr.color.ColorHSVa
 import org.openrndr.color.ColorRGBa
+import org.openrndr.math.LinearType
 import org.openrndr.math.Vector2
 import rain.interfaces.ContextInterface
 import rain.interfaces.LabelInterface
@@ -12,6 +13,8 @@ import rain.language.ItemCompanion
 import rain.language.Label
 import rain.language.LocalContext
 import kotlin.random.Random
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KProperty1
 
 interface ShapeInterface {
 
@@ -104,8 +107,8 @@ open class RndrAnimationOp(
     val properties: MutableMap<String, Any?>, // TODO: reconsider using properties?
 
 ): RndrOp, ShapeInterface, Animatable() {
-    // TODO: naming?
-    var op: String by this.properties.apply { if (machine.poly) putIfAbsent("op", rain.utils.autoKey()) else machine.key }
+    // TODO: naming? and this is a nasty way to deal with poly...
+    override var name: String by this.properties.apply { if (machine.poly) putIfAbsent("op", rain.utils.autoKey()) else machine.key }
 
     override var fillH: Double by this.properties
     override var fillS: Double by this.properties
@@ -120,9 +123,25 @@ open class RndrAnimationOp(
     override var x: Double by this.properties // measured from 0 to 1 L to R
     override var y: Double by this.properties
 
+    val animatableProperties = mutableListOf( // TODO: consider non-mutable list
+        "fillH", "fillS", "fillV", "fillA", "strokeH", "strokeV", "strokeA", "x", "v"
+    )
+
     override var dur: Double by this.properties
 
     override var running: Boolean = true // or should this be false?
+
+    // TODO: add easing
+
+    override fun reTrigger(properties: Map<String, Any?>) {
+        properties.forEach {
+            if (it.key in animatableProperties) {
+                // TODO: this is a little wonky... able to simplify?
+                // .. see https://stackoverflow.com/questions/35525122/kotlin-data-class-how-to-read-the-value-of-property-if-i-dont-know-its-name-at
+                this.animate( this::class.members.first { m-> m.name == it.key } as KMutableProperty0<Double>, it.value as Double, (dur * 1000.0).toLong()) // TODO: add easing
+            }
+        }
+    }
 
     override fun render() {
         super.render()

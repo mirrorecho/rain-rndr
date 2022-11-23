@@ -1,6 +1,5 @@
 package rain.rndr
 
-import com.sun.org.apache.xpath.internal.operations.Bool
 import org.openrndr.Program
 import org.openrndr.animatable.Animatable
 import org.openrndr.animatable.easing.Easing
@@ -18,12 +17,14 @@ interface RndrOp {
     val dur:Double // TODO: consider accommodating ops with indeterminate durs...
     val program: Program // TODO: needed?
 
-    val op: String
+    val name: String
 
     fun start(): RndrOp {
         running = true
         return this
     }
+
+    fun reTrigger(properties: Map<String, Any?>) {}
 
     fun render() {}
 
@@ -92,15 +93,23 @@ abstract class RndrMachine(
 
     fun cleanup(op: RndrOp) {}
 
-    fun triggerOn(runningTime:Double, program: Program, properties: Map<String, Any?>): RndrOp =
-        opFactory(this, program,
-            this.properties.toMutableMap().apply {putAll(properties)}).start().apply { ops.add(this) }
+    fun trigger(runningTime:Double, program: Program, properties: Map<String, Any?>): RndrOp {
+
+        // TODO: naming? and this is a nasty way to deal with poly...
+        val opName: String = if (this.poly) properties["name"] as String? ?: rain.utils.autoKey() else this.key
+        val combinedProperties = properties.toMutableMap().apply {putAll(properties)}
+
+        return (ops.getOrPut(opName)
+            {opFactory(this, program, combinedProperties).start()}
+                ).apply { reTrigger(combinedProperties) }
+    }
+
 
     // TODO: implement trigger, which can either triggerOn, triggerOff, or update
 
     // TODO: should this immediately kill the instance? (current implementation) Or trigger a process to eventually kill?
     fun triggerOff(op: RndrOp) {
-        ops.remove(op.stop().op)
+        ops.remove(op.stop().name)
     }
 
 }

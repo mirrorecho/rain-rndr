@@ -85,7 +85,7 @@ class RndrPlayer(
                     launch {
                         triggerList.forEach { p ->
                             val machine = this@RndrPlayer.machinePalette[p["machine"] as String]
-                            val op = machine.triggerOn(triggerTime, this@program, p)
+                            val op = machine.trigger(triggerTime, this@program, p)
                             launch {
                                 // TODO: consider accommodating ops with indeterminate durs...
                                 delay((op.dur).toDuration(DurationUnit.SECONDS))
