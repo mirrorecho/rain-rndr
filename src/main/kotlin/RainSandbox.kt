@@ -73,19 +73,21 @@ fun main() {
     val c1 = Cell("C1",
 //        mapOf("simultaneous" to true)
     )
-    c1.dur = sequenceOf(4.0, 2.0, 1.0)
-    c1.properties["radius"] = sequenceOf(400.0, 300.0, 10.0)
-    c1.properties["fillH"] = sequenceOf(0.0, 200.0) // TODO: simplify as c1.setProperty("vHSV", 0.9, 0.4, 0.4)
-    c1.machine = cycleOf("BIG_CIRCLE")
-    c1.properties["name"] = cycleOf("C1")
-    c1.properties["x"] = sequenceOf(0.1, 0.9, 0.4)
-    c1.properties["y"] = sequenceOf(0.1, 0.1, 0.1)
+    c1.setVeinCycle("name", "C1") // TODO: is this being used?
+    c1.setVeinCycle("machine", "BIG_CIRCLE")
+    c1.setVeins("dur", 0.0, 4.0, 3.0, 2.0)
+    c1.setVeins("radius", 400.0, 200.0, 20.0, 490.0)
+    c1.setVeins("x", 1.0, 0.9, 0.4, 1.0)
+    c1.setVeins("y", 1.0, 0.1, 0.1, 1.0)
+    c1.setVeins("gate", true, true, true, false)
+//    c1.setVeins("fillH", 0.0, 200.0, 20.0)
     c1.createMe()
+    println(c1.traverseNames)
 
     val c2 = Cell("C2")
-    c2.dur = sequenceOf(1.0)
-    c2.machine = cycleOf("SMALL_CIRCLE")
-    c2.properties["name"] = cycleOf("C2")
+    c2.setVeinCycle("name", "C2") // TODO: is this being used?
+    c2.setVeinCycle("machine", "SMALL_CIRCLE")
+    c2.setVeins("dur", 1.0)
     c2.createMe()
 
     println("-----------------------------------------------------------")
@@ -113,7 +115,7 @@ fun main() {
 
     val rndrMachines = Palette.fromKeys<Circle>("BIG_CIRCLE", "SMALL_CIRCLE")
 
-    val player = RndrPlayer(t, rndrMachines as Palette<RndrMachine>)
+    val player = RndrPlayer(c1, rndrMachines as Palette<RndrMachine>)
 
     println("-----------------------------------------------------------")
 

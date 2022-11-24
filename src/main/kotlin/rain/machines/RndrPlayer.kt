@@ -15,6 +15,7 @@ import org.openrndr.color.ColorRGBa
 import org.openrndr.launch
 import rain.rndr.RndrMachine
 
+// TODO: move to rndr folder?
 // TODO: implement tempos
 // TODO: refactor to inherit from Player
 class RndrPlayer(
@@ -86,9 +87,10 @@ class RndrPlayer(
                         triggerList.forEach { p ->
                             val machine = this@RndrPlayer.machinePalette[p["machine"] as String]
                             val op = machine.trigger(triggerTime, this@program, p)
-                            launch {
+                            println("triggering: " + p.toString())
+                            if (p["gate"] != true) launch {
                                 // TODO: consider accommodating ops with indeterminate durs...
-                                delay((op.dur).toDuration(DurationUnit.SECONDS))
+                                delay((p["dur"] as Double).toDuration(DurationUnit.SECONDS))
                                 machine.triggerOff(op)
                             }
                         }

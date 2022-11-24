@@ -68,8 +68,6 @@ abstract class RndrShape (
     // below are the values for the machine blueprint
     // ... effectively defaults for any machine instance created with this blueprint
 
-    override val poly: Boolean by this.properties.apply { putIfAbsent("poly", true) } // TODO: implement
-
     override var fillH: Double by this.properties.apply { putIfAbsent("fillH", 90.0) }
     override var fillS: Double by this.properties.apply { putIfAbsent("fillS", 0.5) }
     override var fillV: Double by this.properties.apply { putIfAbsent("fillV", 0.5) }
@@ -169,7 +167,7 @@ open class RndrAnimationOp(
         }
     }
 
-    override var dur: Double by this.properties
+    override var dur: Double by this.properties // TODO: this is pointless since the dur needs to come from the reTrigger argument
 
     override var running: Boolean = true // or should this be false?
 
@@ -177,19 +175,26 @@ open class RndrAnimationOp(
     // TODO: add easing
 
     override fun reTrigger(properties: Map<String, Any?>) {
-        println(this.machine.key + ": " + properties)
-        properties.forEach {
-            if (it.key in animatableMap.keys) {
-                // TODO: this is a little wonky... able to simplify?
-                // .. see https://stackoverflow.com/questions/35525122/kotlin-data-class-how-to-read-the-value-of-property-if-i-dont-know-its-name-at
-//                this::class.memberProperties
-//                this.javaClass.kotlin.members.first { m-> m.name == it.key }
-//                this.animate( this::class.members.first { m-> m.name == it.key }, it.value as Double, (dur * 1000.0).toLong()) // TODO: add easing
-//                println(it.key  +": " + animatableMap[it.key]!!.name)
-//                this.animate(animatableMap[it.key]!!, it.value as Double, (dur * 1000.0).toLong())
-                animatableMap[it.key]!!.animate(it.value as Double, (dur * 1000.0).toLong())
-            }
-        }
+        println(this)
+        println(this.machine.key + ", " + this.name + ": " + properties)
+        val animProperties = properties.filter { it.key in animatableMap.keys}
+//        animProperties.forEach {animatableMap[it.key]!!.cancel() }
+        animProperties.forEach { animatableMap[it.key]!!.animate(it.value as Double, (properties["dur"] as Double * 1000.0).toLong()) }
+
+
+//        properties.forEach {
+//            if (it.key in animatableMap.keys) {
+//                // TODO: this is a little wonky... able to simplify?
+//                // .. see https://stackoverflow.com/questions/35525122/kotlin-data-class-how-to-read-the-value-of-property-if-i-dont-know-its-name-at
+////                this::class.memberProperties
+////                this.javaClass.kotlin.members.first { m-> m.name == it.key }
+////                this.animate( this::class.members.first { m-> m.name == it.key }, it.value as Double, (dur * 1000.0).toLong()) // TODO: add easing
+////                println(it.key  +": " + animatableMap[it.key]!!.name)
+////                this.animate(animatableMap[it.key]!!, it.value as Double, (dur * 1000.0).toLong())
+//                animatableMap[it.key]!!.animate(it.value as Double, (dur * 1000.0).toLong())
+//                animatableMap[it.key]!!.complete()
+//            }
+//        }
     }
 
     var renderedOnce = false
@@ -234,6 +239,7 @@ open class Circle(
     override val label: LabelInterface get() = Circle.label
 
     override fun opFactory(machine: RndrMachine, program: Program, properties: MutableMap<String, Any?>): RndrOp {
+        println("MAKING CIRCLE")
         return CircleOp(machine as Circle, program, properties.toMutableMap())
     }
 

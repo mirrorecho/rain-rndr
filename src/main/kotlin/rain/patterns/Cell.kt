@@ -1,7 +1,9 @@
 package rain.patterns
 
+import org.openrndr.shape.sampleEquidistant
 import rain.interfaces.*
 import rain.language.*
+import rain.utils.cycleOf
 
 // a node that represents an iterable over a group nodes ... each of which is connected
 // to this node, in a "pattern"
@@ -23,13 +25,27 @@ open class Cell(
     override val isAlter = false
 
     // TODO: rename to veinNames
-    var traverseNames = listOf("dur", "machine")
+    //  AND IMPORTANT TODO ... how to automate (by method call that easily creates veins)
+    val traverseNames: MutableSet<String> by this.properties.apply { putIfAbsent("traverseNames", mutableSetOf("dur", "machine")) }
+
+    // TODO move the next two functions to be able to apply to any pattern?
+    // .. and figure out how to automate?
+    fun setVeins(key:String, vararg values: Any?) {
+        this.properties[key] = sequenceOf(*values)
+        traverseNames.add(key)
+    }
+
+    fun setVeinCycle(key:String, vararg values: Any?) {
+        this.properties[key] = cycleOf(*values)
+        traverseNames.add(key)
+    }
 
     // the following probably not even needed since dur.sum() is so easy!
 //    val sumDur: Double get() = dur.sum()
 
     override var dur: Sequence<Double> by this.properties
     override var machine: Sequence<String> by this.properties
+    val gate: Sequence<Boolean> by this.properties.apply { putIfAbsent("gate", cycleOf(false)) }
 
 //    val dur: Sequence<Int> = sequenceOf(1).cycle()
 //    val dur: Sequence<Int> = sequenceOf(1).cycle()
@@ -52,14 +68,20 @@ open class Cell(
 
     override val veins: Sequence<MutableMap<String, Any?>> get() = sequence {
         var returning = true
-        val namesIterators: List<Pair<String, Iterator<Any?>>> = traverseNames.map {
-            if (cuePath == null) Pair(it, this@Cell.getAs<Sequence<*>>(it).iterator())
-            else Pair(it, (this@Cell.propertiesWithHeritage[it] as Sequence<*>).iterator())
+        println(this@Cell.traverseNames)
+        val namesIterators: List<Pair<String, Iterator<Any?>? >> = traverseNames.map {
+            val seq: Sequence<*>? = if (cuePath == null)
+                this@Cell.getAs(it)
+                else this@Cell.propertiesWithHeritage[it] as Sequence<*>?
+//            if (cuePath == null) Pair(it, this@Cell.getAs<Sequence<*>>(it).iterator())
+//            else Pair(it, (this@Cell.propertiesWithHeritage[it] as Sequence<*>).iterator())
+            Pair(it, seq?.iterator())
         }
+        println(namesIterators)
         while (returning) {
             val returnMap = mutableMapOf<String, Any?>()
-            namesIterators.forEach {
-                if (it.second.hasNext()) returnMap[it.first] = it.second.next() as Any
+            namesIterators.filter {it.second != null}.forEach {
+                if (it.second!!.hasNext()) returnMap[it.first] = it.second!!.next() as Any
                 else returning = false
             }
             if (returning) yield(returnMap)

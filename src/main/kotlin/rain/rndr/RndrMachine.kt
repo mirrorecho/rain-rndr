@@ -8,6 +8,7 @@ import rain.interfaces.*
 import rain.language.*
 import rain.machines.Machine
 import rain.patterns.*
+import rain.utils.cycleOf
 import kotlin.random.Random
 
 // represents an instance of a machine being operated
@@ -73,7 +74,7 @@ abstract class RndrMachine(
 //        }
 //    }
 
-    abstract val poly: Boolean
+    val poly: Boolean by this.properties.apply { putIfAbsent("poly", true) }
 
     abstract fun opFactory(machine: RndrMachine=this, program: Program, properties: MutableMap<String, Any?>): RndrOp
 
@@ -93,13 +94,15 @@ abstract class RndrMachine(
 
     fun cleanup(op: RndrOp) {}
 
-    fun trigger(runningTime:Double, program: Program, properties: Map<String, Any?>): RndrOp {
+    fun trigger(runningTime:Double, program: Program, triggerProperties: Map<String, Any?>): RndrOp {
 
         // TODO: naming? and this is a nasty way to deal with poly...
-        val opName: String = if (this.poly) properties["name"] as String? ?: rain.utils.autoKey() else this.key
+        val opName: String = if (this.poly) triggerProperties["name"] as String? ?: rain.utils.autoKey() else this.key
 
-        val combinedProperties = this.properties.toMutableMap().apply {putAll(properties)}
+        val combinedProperties = this.properties.toMutableMap().apply {putAll(triggerProperties)}
 
+
+        println(opName)
         return (ops.getOrPut(opName)
             {opFactory(this, program, combinedProperties).start()}
                 ).apply { reTrigger(combinedProperties) }
