@@ -31,8 +31,10 @@ abstract class TreeSelect(
     fun getBranches(): Sequence<Pattern> = getBranchCues().map {
         // TODO: handle branch hooks
         // TODO: test cuesPattern ancestors
+        val myCuePath = CuePath(it, this@TreeSelect.getAncestors())
         it.cuesPattern.apply {
-            this.cuePath = CuePath(it, this@TreeSelect.getAncestors())
+            println("setting cuePath for: " + this.toString())
+            this.cuePath = myCuePath
         }
     }
 }

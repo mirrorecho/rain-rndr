@@ -101,8 +101,7 @@ abstract class RndrMachine(
 
         val combinedProperties = this.properties.toMutableMap().apply {putAll(triggerProperties)}
 
-
-        println(opName)
+//        println(opName)
         return (ops.getOrPut(opName)
             {opFactory(this, program, combinedProperties).start()}
                 ).apply { reTrigger(combinedProperties) }

@@ -46,7 +46,7 @@ class Palette<T: LanguageNode>(
 
     fun put(node: T) {this.nodes[node.key]=node}
 
-    operator fun get(key: String): T = this.nodes[key]!!
+    operator fun get(key: String): T? = this.nodes[key]
 
     operator fun set(key: String, value: T) {this.nodes[key]=value}
 

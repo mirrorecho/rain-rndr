@@ -68,16 +68,19 @@ open class Cell(
 
     override val veins: Sequence<MutableMap<String, Any?>> get() = sequence {
         var returning = true
-        println(this@Cell.traverseNames)
+//        println(this@Cell.cuePath)
         val namesIterators: List<Pair<String, Iterator<Any?>? >> = traverseNames.map {
-            val seq: Sequence<*>? = if (cuePath == null)
+            val seq: Sequence<*>? = if (cuePath == null) {
+//                println("NO HERITAGE: " + this@Cell.toString())
                 this@Cell.getAs(it)
-                else this@Cell.propertiesWithHeritage[it] as Sequence<*>?
+            } else {
+//                println("YAY HERITAGE: " + this@Cell.toString())
+                this@Cell.propertiesWithHeritage[it] as Sequence<*>?
+            }
 //            if (cuePath == null) Pair(it, this@Cell.getAs<Sequence<*>>(it).iterator())
 //            else Pair(it, (this@Cell.propertiesWithHeritage[it] as Sequence<*>).iterator())
             Pair(it, seq?.iterator())
         }
-        println(namesIterators)
         while (returning) {
             val returnMap = mutableMapOf<String, Any?>()
             namesIterators.filter {it.second != null}.forEach {

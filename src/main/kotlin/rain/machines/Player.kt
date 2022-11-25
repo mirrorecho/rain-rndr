@@ -78,7 +78,7 @@ class Player(
 
     fun triggerAt(runningTime: Double, triggerList: MutableList<Map<String, Any?>>) {
         triggerList.forEach { p ->
-            this@Player.machinePalette[p["machine"] as String].trigger(runningTime, p)
+            this@Player.machinePalette[p["machine"] as String]?.trigger(runningTime, p)
         }
 
     }

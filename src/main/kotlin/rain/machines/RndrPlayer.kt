@@ -36,6 +36,7 @@ class RndrPlayer(
         var runningTime = startTime
         // TODO: refactor and simplify this logic...? (also look at old python code)
         var patternDur = 0.0
+        println(pattern)
         if (pattern.isLeaf) {
             // TODO maybe: handle fancy logic like hooks here?
             pattern.veins.forEach {
@@ -50,6 +51,7 @@ class RndrPlayer(
             }
         } else {
             pattern.branches.asTypedSequence<CellPattern>().forEach { branch ->
+                println("yo branch " + branch.toString())
                 if (pattern.simultaneous) {
                     val branchEndTime = setTriggers(branch, runningTime)
                     val branchDur = branchEndTime-runningTime
@@ -85,13 +87,17 @@ class RndrPlayer(
                     if (delayTime > 0) delay((delayTime).toDuration(DurationUnit.SECONDS))
                     launch {
                         triggerList.forEach { p ->
-                            val machine = this@RndrPlayer.machinePalette[p["machine"] as String]
-                            val op = machine.trigger(triggerTime, this@program, p)
-                            println("triggering: " + p.toString())
-                            if (p["gate"] != true) launch {
-                                // TODO: consider accommodating ops with indeterminate durs...
-                                delay((p["dur"] as Double).toDuration(DurationUnit.SECONDS))
-                                machine.triggerOff(op)
+                            val machineName = p["machine"] as String
+                            val machine = this@RndrPlayer.machinePalette[machineName]
+                            if (machine==null) println("WARNING: " + machineName + " not found in the player's machine palette")
+                            else {
+                                val op = machine.trigger(triggerTime, this@program, p)
+//                                println("triggering: " + p.toString())
+                                if (p["gate"] != true) launch {
+                                    // TODO: consider accommodating ops with indeterminate durs...
+                                    delay((p["dur"] as Double).toDuration(DurationUnit.SECONDS))
+                                    machine.triggerOff(op)
+                                }
                             }
                         }
                     }

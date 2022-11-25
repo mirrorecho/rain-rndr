@@ -5,8 +5,12 @@ import org.openrndr.animatable.Animatable
 import org.openrndr.animatable.easing.Easing
 import org.openrndr.color.ColorHSVa
 import org.openrndr.color.ColorRGBa
+import org.openrndr.draw.FontImageMap
+import org.openrndr.draw.WriteStyle
+import org.openrndr.draw.loadFont
 import org.openrndr.math.LinearType
 import org.openrndr.math.Vector2
+import org.openrndr.writer
 import rain.interfaces.ContextInterface
 import rain.interfaces.LabelInterface
 import rain.language.ItemCompanion
@@ -33,6 +37,8 @@ interface ShapeInterface {
     var strokeS: Double
     var strokeV: Double
     var strokeA: Double
+
+    var strokeWeight: Double
 
     var x: Double
     var y: Double
@@ -77,9 +83,10 @@ abstract class RndrShape (
     override var strokeS: Double by this.properties.apply { putIfAbsent("strokeS", 0.5) }
     override var strokeV: Double by this.properties.apply { putIfAbsent("strokeV", 0.5) }
     override var strokeA: Double by this.properties.apply { putIfAbsent("strokeA", 1.0) }
+    override var strokeWeight: Double by this.properties.apply { putIfAbsent("strokeWeight", 1.0) }
 
-    override var x: Double by this.properties.apply { putIfAbsent("x", 0.5) }
-    override var y: Double by this.properties.apply { putIfAbsent("y", 0.5) }
+    override var x: Double by this.properties.apply { putIfAbsent("x", 0.0) }
+    override var y: Double by this.properties.apply { putIfAbsent("y", 0.0) }
 
     // TODO: standard logic to trigger new animation with existing machine instance?
 //    override fun opFactory(machine: RndrMachine=this, program: Program, properties: MutableMap<String, Any?>): RndrAnimation {
@@ -129,6 +136,7 @@ open class RndrAnimationOp(
     override var strokeS: Double = 0.0
     override var strokeV: Double = 1.0
     override var strokeA: Double = 1.0
+    override var strokeWeight: Double = 1.0
 
     override var x: Double = 0.0 // measured from 0 to 1 L to R
     override var y: Double = 0.0
@@ -155,6 +163,7 @@ open class RndrAnimationOp(
             ::strokeS,
             ::strokeV,
             ::strokeA,
+            ::strokeWeight,
             ::x,
             ::y,
         )
@@ -175,8 +184,8 @@ open class RndrAnimationOp(
     // TODO: add easing
 
     override fun reTrigger(properties: Map<String, Any?>) {
-        println(this)
-        println(this.machine.key + ", " + this.name + ": " + properties)
+//        println(this)
+//        println(this.machine.key + ", " + this.name + ": " + properties)
         val animProperties = properties.filter { it.key in animatableMap.keys}
 //        animProperties.forEach {animatableMap[it.key]!!.cancel() }
         animProperties.forEach { animatableMap[it.key]!!.animate(it.value as Double, (properties["dur"] as Double * 1000.0).toLong()) }
@@ -197,11 +206,14 @@ open class RndrAnimationOp(
 //        }
     }
 
-    var renderedOnce = false
+    var renderedOnce = false // TO DO: used?
     fun renderOnce() {
 //        initAnimatedProperty(::x)
 //        renderedOnce = true
     }
+
+    // TODO: implement translate, rotate, scale transformations!!!!
+    // TODO: ... eventually ortho, perspective projections
 
     override fun render() {
         if (!renderedOnce) renderOnce()
@@ -220,7 +232,7 @@ open class RndrAnimationOp(
     }
 }
 
-
+// ===========================================================================================================
 // ===========================================================================================================
 
 open class Circle(
@@ -239,12 +251,10 @@ open class Circle(
     override val label: LabelInterface get() = Circle.label
 
     override fun opFactory(machine: RndrMachine, program: Program, properties: MutableMap<String, Any?>): RndrOp {
-        println("MAKING CIRCLE")
         return CircleOp(machine as Circle, program, properties.toMutableMap())
     }
 
     var radius: Double by this.properties.apply { putIfAbsent("radius", 200.0) }
-
 
     class CircleOp(
         override val machine: Circle,
@@ -263,22 +273,182 @@ open class Circle(
         override fun render() {
             super.render()
 
-
             this.program.apply {
-//                if (!animation.hasAnimations()) {
-//                    animation.apply {
-//                        ::x.animate(width.toDouble(), 1000, Easing.CubicInOut)
-//                        ::x.complete()
-//                        ::x.animate(0.0, 1000, Easing.CubicInOut)
-//                        ::x.complete()
-//                    }
-//                }
                 drawer.fill = fill
                 drawer.stroke = stroke
+                drawer.strokeWeight = strokeWeight
                 // TODO: are these defaults OK?
                 drawer.circle(x * program.width, y * program.height, radius)
             }
         }
     }
+}
 
+
+// ===========================================================================================================
+// ===========================================================================================================
+
+open class Line(
+    key:String = rain.utils.autoKey(),
+    properties: Map<String, Any?> = mapOf(),
+    context: ContextInterface = LocalContext,
+): RndrShape(key, properties, context) {
+
+    companion object : ItemCompanion() {
+        override val label: Label<Line> = Label(
+            factory = { k, p, c -> Line(k, p, c) },
+            labels = listOf("Line", "RndrShape", "RndrMachine", "Machine"),
+        )
+    }
+
+    override val label: LabelInterface get() = Line.label
+
+    override fun opFactory(machine: RndrMachine, program: Program, properties: MutableMap<String, Any?>): RndrOp {
+        return LineOp(machine as Line, program, properties.toMutableMap())
+    }
+
+    var x2: Double by this.properties.apply { putIfAbsent("x2", 1.0) }
+    var y2: Double by this.properties.apply { putIfAbsent("y2", 1.0) }
+
+    open class LineOp(
+        override val machine: Line,
+        program: Program,
+        properties: MutableMap<String, Any?>,
+    ): RndrAnimationOp(machine, program, properties) {
+
+        var x2: Double = 1.0
+        var y2: Double = 1.0
+
+        init {
+            animatableMap.putAll(mapOf(
+                "x2" to ::x2,
+                "y2" to ::y2,
+            ))
+        }
+
+        override fun render() {
+            super.render()
+
+            this.program.apply {
+                drawer.fill = fill
+                drawer.stroke = stroke
+                drawer.strokeWeight = strokeWeight
+                // TODO: are these defaults OK?
+                drawer.lineSegment(x * program.width, y * program.height, x2 * program.width, y2 * program.height)
+            }
+        }
+    }
+}
+
+// ===========================================================================================================
+// ===========================================================================================================
+
+open class Rectangle(
+    key:String = rain.utils.autoKey(),
+    properties: Map<String, Any?> = mapOf(),
+    context: ContextInterface = LocalContext,
+): RndrShape(key, properties, context) {
+
+    companion object : ItemCompanion() {
+        override val label: Label<Rectangle> = Label(
+            factory = { k, p, c -> Rectangle(k, p, c) },
+            labels = listOf("Rectangle", "RndrShape", "RndrMachine", "Machine"),
+        )
+    }
+
+    override val label: LabelInterface get() = Rectangle.label
+
+    override fun opFactory(machine: RndrMachine, program: Program, properties: MutableMap<String, Any?>): RndrOp {
+        return RectangleOp(machine as Rectangle, program, properties.toMutableMap())
+    }
+
+    var width: Double by this.properties.apply { putIfAbsent("width", 90.0) }
+    var height: Double by this.properties.apply { putIfAbsent("height", 90.0) }
+
+    class RectangleOp(
+        override val machine: Rectangle,
+        program: Program,
+        properties: MutableMap<String, Any?>,
+    ): RndrAnimationOp(machine, program, properties) {
+
+        var width: Double = 90.0
+        var height: Double = 90.0
+
+        init {
+            animatableMap.putAll(mapOf(
+                "width" to ::width,
+                "height" to ::height,
+            ))
+        }
+
+        override fun render() {
+            super.render()
+
+            this.program.apply {
+                drawer.fill = fill
+                drawer.stroke = stroke
+                drawer.strokeWeight = strokeWeight
+                drawer.rectangle(x * program.width, y * program.height, this@RectangleOp.width, this@RectangleOp.height)
+            }
+        }
+    }
+}
+
+
+// ===========================================================================================================
+// ===========================================================================================================
+
+open class Text(
+    key:String = rain.utils.autoKey(),
+    properties: Map<String, Any?> = mapOf(),
+    context: ContextInterface = LocalContext,
+): RndrShape(key, properties, context) {
+
+    companion object : ItemCompanion() {
+        override val label: Label<Text> = Label(
+            factory = { k, p, c -> Text(k, p, c) },
+            labels = listOf("Text", "RndrShape", "RndrMachine", "Machine"),
+        )
+    }
+
+    override val label: LabelInterface get() = Text.label
+
+    override fun opFactory(machine: RndrMachine, program: Program, properties: MutableMap<String, Any?>): RndrOp {
+        return TextOp(machine as Text, program, properties.toMutableMap())
+    }
+
+    var text: String by this.properties.apply { putIfAbsent("text", "Hi") }
+
+    var font: FontImageMap? = null
+
+    class TextOp(
+        override val machine: Text,
+        program: Program,
+        properties: MutableMap<String, Any?>,
+    ): RndrAnimationOp(machine, program, properties) {
+
+        var text: String by this.properties.apply { putIfAbsent("text", "Hi") }
+
+        init {
+            program.apply {
+                this@TextOp.machine.font = loadFont("data/fonts/default.otf", 44.0)
+            }
+
+            animatableMap.putAll(mapOf(
+            ))
+        }
+
+        override fun render() {
+            super.render()
+
+            this.program.apply {
+
+                drawer.fill = fill
+                drawer.stroke = stroke
+                drawer.strokeWeight = strokeWeight
+                drawer.fontMap = machine.font
+                drawer.text(this@TextOp.text, x * program.width, y * program.height)
+            }
+        }
+    }
 }

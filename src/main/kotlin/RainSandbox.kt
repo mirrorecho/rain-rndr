@@ -5,10 +5,6 @@ import rain.machines.*
 import rain.rndr.*
 import rain.utils.*
 
-fun yoFancy(li:LanguageItem) {
-    println(li::class.simpleName)
-}
-
 
 fun main() {
 
@@ -28,7 +24,9 @@ fun main() {
 
     LocalContext.registerLabel(Printer.label)
     LocalContext.registerLabel(Circle.label)
-
+    LocalContext.registerLabel(Line.label)
+    LocalContext.registerLabel(Rectangle.label)
+    LocalContext.registerLabel(Text.label)
 
 
 //    var f = LocalContext.make<FancyNode>("FancyNode", "NODEFN123", mapOf("yo" to "MAMA"))
@@ -66,6 +64,9 @@ fun main() {
 
     Circle("BIG_CIRCLE", mapOf("radius" to 10.0, "x" to 1.0, "y" to 0.0)).createMe()
     Circle("SMALL_CIRCLE", mapOf("radius" to 2.0)).createMe()
+    Line("LINE1").createMe()
+    Rectangle("RECT1").createMe()
+    Text("TEXT1").createMe()
 
     println("-----------------------------------------------------------")
     // create the cell patterns that trigger the machines
@@ -82,12 +83,12 @@ fun main() {
     c1.setVeins("gate", true, true, true, false)
 //    c1.setVeins("fillH", 0.0, 200.0, 20.0)
     c1.createMe()
-    println(c1.traverseNames)
 
     val c2 = Cell("C2")
     c2.setVeinCycle("name", "C2") // TODO: is this being used?
-    c2.setVeinCycle("machine", "SMALL_CIRCLE")
-    c2.setVeins("dur", 1.0)
+    c2.setVeinCycle("machine", "TEXT1")
+    c2.setVeinCycle("text", "Yo Mama")
+    c2.setVeins("dur", 2.0)
     c2.createMe()
 
     println("-----------------------------------------------------------")
@@ -113,9 +114,9 @@ fun main() {
 
     println("-----------------------------------------------------------")
 
-    val rndrMachines = Palette.fromKeys<Circle>("BIG_CIRCLE", "SMALL_CIRCLE")
+    val rndrMachines = Palette.fromKeys<RndrMachine>("BIG_CIRCLE", "SMALL_CIRCLE", "LINE1", "RECT1", "TEXT1")
 
-    val player = RndrPlayer(c1, rndrMachines as Palette<RndrMachine>)
+    val player = RndrPlayer(t, rndrMachines)
 
     println("-----------------------------------------------------------")
 
