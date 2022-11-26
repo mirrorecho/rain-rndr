@@ -13,10 +13,10 @@ import kotlin.random.Random
 
 // represents an instance of a machine being operated
 interface RndrOp {
-    val machine: RndrMachine
+    val machine: RndrMachine<RndrOp>
     var running: Boolean
-    val dur:Double // TODO: consider accommodating ops with indeterminate durs...
-    val program: Program // TODO: needed?
+//    val dur:Double // TODO: consider accommodating ops with indeterminate durs...
+//    val program: Program // TODO: needed?
 
     val name: String
 
@@ -36,47 +36,21 @@ interface RndrOp {
     }
 }
 
-
 // think of RndrMachine kind of like an sc SynthDef ... it's a blueprint,
 // that also implements the rain Machine interface... triggering the machine
 // creates a new instance of a running machine instance
 
-abstract class RndrMachine(
+abstract class RndrMachine<T:RndrOp>(
     key:String = rain.utils.autoKey(),
     properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
+    program: Program,
+    val opFactory: () -> T,
 ): Machine, Leaf(key, properties, context) {
-
-
-
-    // TODO: naming? (since "Instance" has it's own OOP meaning)
-//    open class MachineInstance(
-//        open val machine: RndrMachine,
-//        val program: Program, // TODO: needed?
-//        val properties: MutableMap<String, Any?>,
-//    ) {
-//
-//        var running = false
-//
-//        val dur:Double get() = this.properties["dur"] as Double
-//
-//        open fun render() {}
-//
-//        fun start(): MachineInstance {
-//            running = true
-//            return this
-//        }
-//
-//        fun stop(): MachineInstance {
-//            running = false
-//            machine.cleanup(this)
-//            return this
-//        }
-//    }
 
     val poly: Boolean by this.properties.apply { putIfAbsent("poly", true) }
 
-    abstract fun opFactory(machine: RndrMachine=this, program: Program, properties: MutableMap<String, Any?>): RndrOp
+//    abstract fun opFactory(machine: RndrMachine<T> = this, program: Program, properties: MutableMap<String, Any?>): T
 
     val ops = mutableMapOf<String, RndrOp>()
 
