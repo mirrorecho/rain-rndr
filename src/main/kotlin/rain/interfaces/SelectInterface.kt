@@ -44,6 +44,8 @@ interface SelectInterface {
 
     val first: LanguageItem? get() = this.asSequence().firstOrNull()
 
+    // TODO: implement a firstAs?
+
     fun get(key: String) {throw NotImplementedError()}
 
     // same as implementing __call__ method in python... cool

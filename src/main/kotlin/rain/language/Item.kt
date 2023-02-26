@@ -44,8 +44,9 @@ open class Node(
     override fun r(direction: SelectDirection, label:String?, keys:List<String>?, properties:Map<String,Any>?): TargetedRelationshipSelect =
         selectSelf.r(direction=direction, label=label, keys=keys, properties=properties)
 
-    override fun targets(label:String?, keys:List<String>?, properties:Map<String,Any>?): TargetedRelationshipSelect =
-        r(direction= SelectDirection.RIGHT, label=label, keys=keys, properties=properties)
+    override fun <T:LanguageNode?>targetsAs(label:String?, keys:List<String>?, properties:Map<String,Any>?): T =
+        r(direction= SelectDirection.RIGHT, label=label, keys=keys, properties=properties).n().first as T
+
 
 }
 

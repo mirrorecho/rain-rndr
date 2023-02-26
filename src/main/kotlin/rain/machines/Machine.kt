@@ -4,11 +4,10 @@ import rain.interfaces.*
 import rain.language.*
 import rain.patterns.*
 
+// TODO: rename to MachineInterface
 interface Machine: LanguageNode {
 
     fun reset() { throw NotImplementedError() }
-
-    fun render() { throw NotImplementedError() }
 
     // NOTE: trigger is key here... it's what fundamentally makes a machine a machine
     // ... i.e. a machine is something that's "trigger-able"

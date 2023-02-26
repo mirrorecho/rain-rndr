@@ -51,7 +51,8 @@ interface LanguageItem: GraphableItem {
 interface LanguageNode: LanguageItem, GraphableNode {
     fun r(direction: SelectDirection, label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null): SelectInterface
 
-    fun targets(label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null): SelectInterface
+    // TODO: is this even necessary in this interface? Or just include in the Node class?
+    fun <T:LanguageNode?>targetsAs(label:String?=null, keys:List<String>?=null, properties:Map<String,Any>?=null): T
 }
 
 // ===========================================================================================================
