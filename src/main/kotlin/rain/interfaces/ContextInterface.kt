@@ -1,6 +1,8 @@
 package rain.interfaces
 
+import org.openrndr.Program
 import rain.language.Relationship
+import rain.rndr.MachineFuncOp
 
 interface ContextInterface {
     val graph: GraphInterface
@@ -30,6 +32,13 @@ interface ContextInterface {
     fun <T: LanguageItem>makeRelationship(fromItem:GraphableRelationship): T {
         return this.makeRelationship(fromItem.primaryLabel, fromItem.key, fromItem.source.key, fromItem.target.key, fromItem.properties)
     }
+
+    // Ops interface
+    fun getOp(machineKey: String, opKey:String): MachineFuncOp?
+
+    fun stopOp(machineKey: String, opKey:String)
+
+    fun cycleOps()
 
 }
 

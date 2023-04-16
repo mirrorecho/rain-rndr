@@ -14,13 +14,7 @@ open class Cell(
     context: ContextInterface = LocalContext,
 ): CellPattern, Leaf(key, properties, context) {
 
-    companion object : ItemCompanion() {
-        override val label: Label<Cell> = Label(
-            factory = { k, p, c -> Cell(k, p, c) },
-            labels = listOf("Cell", "Leaf", "CellPattern", "Pattern"),
-        )
-    }
-    override val label: LabelInterface get() = Cell.label
+    override val label = LocalContext.getLabel("Cell", "Leaf", "CellPattern", "Pattern") { k, p, c -> Cell(k, p, c) }
 
     override val isAlter = false
 

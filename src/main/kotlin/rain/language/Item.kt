@@ -3,9 +3,6 @@ package rain.language
 import rain.interfaces.*
 import rain.utils.autoKey
 
-abstract class ItemCompanion {
-    abstract val label: LabelInterface
-}
 
 // ===========================================================================================================
 
@@ -28,18 +25,13 @@ abstract class Item(
 // ===========================================================================================================
 
 open class Node(
-    override val key:String = autoKey(),
+    key:String = autoKey(),
     properties: Map<String, Any?> = mapOf(),
-    override val context: ContextInterface = LocalContext,
+    context:ContextInterface = LocalContext,
 ): LanguageNode, Item(key, properties, context) {
 
-    companion object: ItemCompanion() {
-        override val label: Label<Node> = Label(
-            factory = { k, p, c -> Node(k, p, c) },
-            labels = listOf("Node"),
-        )
-    }
-    override val label: LabelInterface get() = Node.label
+    // TODO: move into class args? or just list of labels in class args?
+    override val label = LocalContext.getLabel("NODE") { k, p, c -> Node(k, p, c) }
 
     override fun r(direction: SelectDirection, label:String?, keys:List<String>?, properties:Map<String,Any>?): TargetedRelationshipSelect =
         selectSelf.r(direction=direction, label=label, keys=keys, properties=properties)
@@ -58,6 +50,7 @@ open class Relationship(
     var target_key: String?, // ditto
     properties: Map<String, Any?> = mapOf(),
     context:ContextInterface = LocalContext,
+    relationshipLabel: String = "RELATES_TO"
 ): LanguageRelationship, Item(key, properties, context) {
 
     // TODO: elvis operator defaulting to empty string is wonky here... should just alwyas have the key
@@ -65,15 +58,7 @@ open class Relationship(
     override val source: Node by lazy { Node(source_key ?: "") }
     override val target: Node by lazy { Node(target_key ?: "") }
 
-    companion object: ItemCompanion() {
-        override val label: Label<Relationship> = Label(
-            factory = { k, p, c -> Relationship(k, null, null, p, c) },
-            labels = listOf("RELATES_TO"),
-        )
-    }
-    override val label: LabelInterface get()  = Relationship.label
-
-
-
+    override val label = LocalContext.getLabel(relationshipLabel) { k, p, c -> Relationship(k, null, null, p, c) }
 
 }
+

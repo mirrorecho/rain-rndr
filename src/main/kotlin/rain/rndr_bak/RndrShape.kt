@@ -1,26 +1,5 @@
-package rain.rndr
+package rain.rndr_bak
 
-import org.openrndr.Program
-import org.openrndr.animatable.Animatable
-import org.openrndr.animatable.easing.Easing
-import org.openrndr.color.ColorHSVa
-import org.openrndr.color.ColorRGBa
-import org.openrndr.draw.FontImageMap
-import org.openrndr.draw.WriteStyle
-import org.openrndr.draw.loadFont
-import org.openrndr.math.LinearType
-import org.openrndr.math.Vector2
-import org.openrndr.writer
-import rain.interfaces.ContextInterface
-import rain.interfaces.LabelInterface
-import rain.language.ItemCompanion
-import rain.language.Label
-import rain.language.LocalContext
-import kotlin.random.Random
-import kotlin.reflect.KCallable
-import kotlin.reflect.KMutableProperty0
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.KProperty1
 //
 //interface ShapeInterface {
 //

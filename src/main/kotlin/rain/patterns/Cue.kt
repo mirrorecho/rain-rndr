@@ -11,13 +11,7 @@ open class Cue(
     context: ContextInterface = LocalContext,
 ): Node(key, properties, context) {
 
-    companion object : ItemCompanion() {
-        override val label: Label<Cue> = Label(
-            factory = { k, p, c -> Cue(k, p, c) },
-            labels = listOf("Cue"),
-        )
-    }
-    override val label: LabelInterface get() = Cue.label
+    override val label = LocalContext.getLabel("Cue") { k, p, c -> Cue(k, p, c) }
 
     // TODO: these all need tests!
     // also TODO: should these be by lazy?
@@ -41,7 +35,11 @@ open class Cue(
 //    #     return tuple(self.r("<-", "ALTERS").n())
 }
 
+
 // ===========================================================================================================
+// ===========================================================================================================
+
+// TODO: maybe these aren't needed as separate classes?
 
 open class Contains(
     key:String = rain.utils.autoKey(),
@@ -51,14 +49,7 @@ open class Contains(
     context:ContextInterface = LocalContext,
 ): Relationship(key, source_key, target_key, properties, context) {
 
-    companion object : ItemCompanion() {
-        override val label: Label<Contains> = Label(
-            factory = { k, p, c -> Contains(k, null, null, p, c) },
-            labels = listOf("CONTAINS"),
-        )
-    }
-
-    override val label: LabelInterface get() = Contains.label
+    override val label = LocalContext.getLabel("CONTAINS") { k, p, c -> Contains(k, null, null, p, c) }
 }
 
 // ===========================================================================================================
@@ -71,14 +62,7 @@ open class Cues(
     context:ContextInterface = LocalContext,
 ): Relationship(key, source_key, target_key, properties, context) {
 
-    companion object : ItemCompanion() {
-        override val label: Label<Cues> = Label(
-            factory = { k, p, c -> Cues(k, null, null, p, c) },
-            labels = listOf("CUES"),
-        )
-    }
-
-    override val label: LabelInterface get() = Cues.label
+    override val label = LocalContext.getLabel("CUES") { k, p, c -> Cues(k, null, null, p, c) }
 }
 
 // ===========================================================================================================
@@ -91,14 +75,7 @@ open class CuesNext(
     context:ContextInterface = LocalContext,
 ): Relationship(key, source_key, target_key, properties, context) {
 
-    companion object : ItemCompanion() {
-        override val label: Label<CuesNext> = Label(
-            factory = { k, p, c -> CuesNext(k, null, null, p, c) },
-            labels = listOf("CUES_NEXT"),
-        )
-    }
-
-    override val label: LabelInterface get() = CuesNext.label
+    override val label = LocalContext.getLabel("CUES_NEXT") { k, p, c -> CuesNext(k, null, null, p, c) }
 }
 
 // ===========================================================================================================
@@ -111,14 +88,7 @@ open class CuesFirst(
     context:ContextInterface = LocalContext,
 ): Relationship(key, source_key, target_key, properties, context) {
 
-    companion object : ItemCompanion() {
-        override val label: Label<CuesFirst> = Label(
-            factory = { k, p, c -> CuesFirst(k, null, null, p, c) },
-            labels = listOf("CUES_FIRST"),
-        )
-    }
-
-    override val label: LabelInterface get() = CuesFirst.label
+    override val label = LocalContext.getLabel("CUES_FIRST") { k, p, c -> CuesFirst(k, null, null, p, c) }
 }
 
 // ===========================================================================================================
@@ -131,14 +101,9 @@ open class CuesLast(
     context:ContextInterface = LocalContext,
 ): Relationship(key, source_key, target_key, properties, context) {
 
-    companion object : ItemCompanion() {
-        override val label: Label<CuesLast> = Label(
-            factory = { k, p, c -> CuesLast(k, null, null, p, c) },
-            labels = listOf("CUES_LAST"),
-        )
-    }
+    override val label = LocalContext.getLabel("CUES_LAST") { k, p, c -> CuesLast(k, null, null, p, c) }
 
-    override val label: LabelInterface get() = CuesLast.label
+
 }
 
 

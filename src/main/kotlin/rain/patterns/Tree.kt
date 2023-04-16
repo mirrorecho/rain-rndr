@@ -10,18 +10,11 @@ open class Tree(
     context: ContextInterface = LocalContext,
 ): Pattern, Node(key, properties, context) {
 
-    companion object : ItemCompanion() {
-        override val label: Label<Tree> = Label(
-            factory = { k, p, c -> Tree(k, p, c) },
-            labels = listOf("Tree", "Pattern"),
-        )
-    }
+    override val label = LocalContext.getLabel("Tree", "Pattern") { k, p, c -> Tree(k, p, c) }
 
     override val isAlter = false
 
     override val isLeaf = false
-
-    override val label: LabelInterface get() = Tree.label
 
     // TODO: make these by lazy
 
@@ -80,12 +73,7 @@ open class CellTree(
     context: ContextInterface = LocalContext,
 ): CellPattern, Tree(key, properties, context) {
 
-    companion object : ItemCompanion() {
-        override val label: Label<CellTree> = Label(
-            factory = { k, p, c -> CellTree(k, p, c) },
-            labels = listOf("CellTree", "Tree", "CellPattern", "Pattern"),
-        )
-    }
+    override val label = LocalContext.getLabel("CellTree", "Tree", "CellPattern", "Pattern") { k, p, c -> CellTree(k, p, c) }
 
     override var simultaneous: Boolean by this.properties.apply { putIfAbsent("simultaneous", false) }
 
@@ -94,8 +82,6 @@ open class CellTree(
 //        super.setInitProperties(existingProperties)
 //        existingProperties.putIfAbsent("simultaneous", false)
 //    }
-
-    override val label: LabelInterface get() = CellTree.label
 
     // TODO maybe: should the default veins NOT include heritage? (and then create a separate veinsWithHeritage?)
     // ... assume NO, that the below is fine

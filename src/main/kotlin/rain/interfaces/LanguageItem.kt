@@ -24,21 +24,23 @@ interface LanguageItem: GraphableItem {
     }
 
     fun read(): LanguageItem {
-        context.graph.read(this)
+        graph.read(this)
         return this
     }
 
     fun delete() {
-        context.graph.delete(this.key)
+        graph.delete(this.key)
     }
 
     fun mergeMe(): LanguageItem {
-        context.graph.merge(this)
+        graph.merge(this)
         return this
     }
 
+    // TODO: this is inconvenient because we lose the specific type information when returning this as a LanguageItem
+    // remove/rethink?
     fun createMe(): LanguageItem {
-        context.graph.create(this)
+        graph.create(this)
         return this
     }
 

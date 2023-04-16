@@ -1,14 +1,4 @@
-package rain.rndr
-
-import rain.interfaces.*
-import rain.language.*
-
-import org.openrndr.Program
-import org.openrndr.animatable.Animatable
-import org.openrndr.animatable.easing.Easing
-import org.openrndr.color.ColorHSVa
-import org.openrndr.draw.loadFont
-import kotlin.random.Random
+package rain.rndr_bak
 
 //open class Text(
 //    key:String = rain.utils.autoKey(),

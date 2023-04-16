@@ -8,10 +8,6 @@ import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 import org.openrndr.application
-import org.openrndr.Program
-import org.openrndr.animatable.Animatable
-import org.openrndr.animatable.easing.Easing
-import org.openrndr.color.ColorRGBa
 import org.openrndr.launch
 import rain.rndr.RndrMachine
 
@@ -91,12 +87,14 @@ class RndrPlayer(
                             val machine = this@RndrPlayer.machinePalette[machineName]
                             if (machine==null) println("WARNING: " + machineName + " not found in the player's machine palette")
                             else {
+
                                 val op = machine.trigger(triggerTime, this@program, p)
+
 //                                println("triggering: " + p.toString())
                                 if (p["gate"] != true) launch {
                                     // TODO: consider accommodating ops with indeterminate durs...
                                     delay((p["dur"] as Double).toDuration(DurationUnit.SECONDS))
-                                    machine.triggerOff(op)
+                                    machine.stopOp(op)
                                 }
                             }
                         }
@@ -107,7 +105,7 @@ class RndrPlayer(
 
             extend {
 
-                machinePalette.forEach { it.render() }
+                machinePalette.context.cycleOps()
 
                 // DO NOTHING?
 
