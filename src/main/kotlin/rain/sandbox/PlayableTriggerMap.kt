@@ -1,11 +1,47 @@
 package rain.sandbox
 
+import rain.language.Palette
+import rain.machines.Machine
+import rain.rndr.*
+
 // TODO / NOTES: base machine types:
 //  - AnimValue - a simple value that can be animated, with optional easing/envelope
 //  - AnimMulti - multiple values, which can either be fixed values, animated values (with optional easing/envelope),
 //      or references to other AnimValue or AnimMulti machines
 
+fun triggerArg(argOpName: String) {}
+
+fun triggerArg(argValue: Double) {}
+
 // TODO: how to associate dependant MachineFuncs to particular ops?
+
+// TODO: should the triggers be something fancier than simple maps? - YES!
+//  - define a trigger as a THING (Class/Oject)
+
+// TODO maybe: consider whether a trigger would ever be reused...
+//  that could be an interesting idea with creative possibilities...
+class Trigger(
+    val machineKey: String,
+    val dur: Double, // TODO maybe: consider whether this could be based on some logic and not just a simple value!
+    val op
+    ) {
+
+    fun getProperties(): Map<String, Any> = mapOf() // TODO: add logic for getting map!
+
+    // TODO maybe: keep machinePalette (or even the machine) around?
+    fun getMachine(machinePalette: Palette<RndrMachine>): RndrMachine? = machinePalette[this.machineKey]
+
+    fun triggerMachine(machinePalette: Palette<RndrMachine>) {
+        val machine = getMachine(machinePalette)
+        if (machine ==null ) println("$machineKey not found! Could not trigger machine.")
+        else {
+            // TODO: implement the op triggering
+            machine.triggerOp()
+        }
+    }
+
+}
+
 val triggersToPlay = mutableMapOf(
     0.0 to listOf(
         mapOf(
@@ -30,20 +66,42 @@ val triggersToPlay = mutableMapOf(
             "startValue" to 2.0,
             "endValue" to 40.0,
             "dur" to 2.0,
-            "ops" to listOf("SIZE_OP"),
+            "op" to "SIZE_OP",
         ),
         mapOf(
             "machine" to "SMALL_CIRCLE", // (a Circle, which inherits from AnimMulti)
-            "ops" to listOf("SIZE_OP", "SMALL_CIRCLE_OP"),
+
+            // "op" to null, // NOTE: null (the default) means auto-create a new op
+
+            // TODO: how to kick off (or connect to) an op for the circle?
+
+            // NOTE that the Circle machine must define these as being able to be directly triggered through the Circle
+            // (as opposed to separately triggering a Color machine)
+            "stroke_h" to triggerArg(290.0),
+            "stroke_s" to triggerArg(0.9),
+            "stroke_v" to triggerArg(0.8),
+            "stroke_a" to triggerArg(1.0),
+
+            "radius" to triggerArg("SIZE_OP"), // TODO: how to connect this to the the SIZE machine/op above (shared among many circles)?
+
+            // need to deal with:
+            // - radius
+            // - POSITION - x
+            // - POSITION - y
+            // - STROKE_COLOR - h
+            // - STROKE_COLOR - s
+            // - STROKE_COLOR - v
+            // - STROKE_COLOR - a
+            // - stroke_weight
+            // - FILL_COLOR - h
+            // - FILL_COLOR - s
+            // - FILL_COLOR - v
+            // - FILL_COLOR - a
+
+            // "ops" to listOf("SIZE_OP", "SMALL_CIRCLE_OP"),
             // TODO: OK, but how to handle the case where multiple ops could would have values
             //  with the same names? (e.g. values for HSVa for fill vs stroke)
 
-            "SIZE" to 1001, // NOTE: this is confusing (i.e. not clear whether value is the ID of the op or the actual size value)
-            "op" to 1002,
-            // "HEIGHT" to 1002, // NOTE... this is redundant / assumed
-            "gate" to true, // type: Boolean? (true means gate on, false means gate off, null means no change)
-            "dur" to 4.0,
-            "doneAction" to 2,
         ),
         mapOf(
             "machine" to "SMALL_CIRCLE",

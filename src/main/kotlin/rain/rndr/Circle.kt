@@ -16,7 +16,11 @@ open class Circle(
 
     override val label = LocalContext.getLabel("Circle", "RndrMachine", "MachineFunc", "Machine", "Leaf") { k, p, c -> Circle(k, p, c) }
 
-    // TODO: maybe by lazy is not ideal here? think about it...
+    // TODO: instead? point to objects that could EITHER represent
+    //  - machine nodes
+    //  - OR simple values (from this node's properties)
+    //  - OR collections of values (from this node's properties)
+    // TODO: or maybe by lazy is not ideal here? think about it...
     val radius: ValueFunc by lazy { targetsAs("RADIUS") }
     val position: Position by lazy { targetsAs("POSITION") }
     val strokeColor: Color? by lazy { targetsAs("STROKE_COLOR") }
