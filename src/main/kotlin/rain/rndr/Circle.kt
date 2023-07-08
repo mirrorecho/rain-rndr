@@ -30,7 +30,7 @@ open class Circle(
     override var renderOp: (MachineFuncOp)->Unit = { op ->
         op.program.apply {
             // TODO: pass separate keys for each op
-            drawer.stroke = strokeColor?.colorRGBa(op.opKey)
+            drawer.stroke = strokeColor?.colorRGBa(op)
             drawer.strokeWeight = strokeWeight.opVal(op.opKey)
             drawer.fill = fillColor?.colorRGBa(op.opKey)
             drawer.circle(

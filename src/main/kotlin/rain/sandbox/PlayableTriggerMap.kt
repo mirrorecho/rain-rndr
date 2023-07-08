@@ -1,8 +1,10 @@
 package rain.sandbox
 
+import org.openrndr.Program
 import rain.language.Palette
 import rain.machines.Machine
 import rain.rndr.*
+import rain.utils.autoKey
 
 // TODO / NOTES: base machine types:
 //  - AnimValue - a simple value that can be animated, with optional easing/envelope
@@ -20,10 +22,34 @@ fun triggerArg(argValue: Double) {}
 
 // TODO maybe: consider whether a trigger would ever be reused...
 //  that could be an interesting idea with creative possibilities...
+
+open class OpMap() {
+
+}
+
+open class MachineFuncOp(
+    val machineFunc:MachineFunc,
+    val opKey:String = autoKey(),
+    val program: Program,
+    val properties: Map<String, Any?> = mapOf(), // TODO: TOO VAGUE?
+) {
+    var isRunning: Boolean = false
+    val opMap: MutableMap<String, MachineFuncOp> = mutableMapOf()
+
+
+
+    // TODO: does triggering make sense in this context?
+//    fun trigger(properties: Map<String, Any?>) { throw NotImplementedError() }
+
+    fun stop() { this.machineFunc.stopOp(this) }
+}
+
 class Trigger(
     val machineKey: String,
-    val dur: Double, // TODO maybe: consider whether this could be based on some logic and not just a simple value!
-    val op
+    val opKey: String = autoKey(),
+    val dur: Double = 0.0, // TODO maybe: consider whether this could be based on some logic and not just a simple value!
+    val machinesToOps: Map<String, String> = mapOf(),
+    val program: Program,
     ) {
 
     fun getProperties(): Map<String, Any> = mapOf() // TODO: add logic for getting map!
@@ -36,13 +62,22 @@ class Trigger(
         if (machine ==null ) println("$machineKey not found! Could not trigger machine.")
         else {
             // TODO: implement the op triggering
-            machine.triggerOp()
+            machine.triggerOp( opKey, program, getProperties() )
         }
     }
 
 }
 
-val triggersToPlay = mutableMapOf(
+val triggersToPlay2 = mutableMapOf(
+    0.0 to listOf(
+        Trigger("OPERATE", "SIZE_OP", 4.0, Program())
+    ),
+    1.0 to listOf(
+
+    ),
+)
+
+val triggersToPlay1 = mutableMapOf(
     0.0 to listOf(
         mapOf(
             "machine" to "OPERATE", // assume only 1 machine necessary for any given work?

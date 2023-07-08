@@ -49,6 +49,10 @@ open class MachineFuncOp(
 //    fun trigger(properties: Map<String, Any?>) { throw NotImplementedError() }
 
     fun stop() { this.machineFunc.stopOp(this) }
+
+    // TODO needs to be implemented to actually find by name
+    fun getChildOp(machineKey:String): MachineFuncOp = this
+
 }
 
 // TODO: or is this an interface?
@@ -73,6 +77,8 @@ open class MachineFunc(
 
     // TODO: create an interface for accessing any running Op
     // ... is below sufficient?
+
+    fun getOp(parentOp: MachineFuncOp) = parentOp.getChildOp(this.key)
 
     fun opProperty(opKey: String, name:String) = context.getOp(this.key, opKey)!!.properties[name]
 
