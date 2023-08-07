@@ -68,9 +68,11 @@ class Trigger(
 
 }
 
+val testProgram = Program(true)
+
 val triggersToPlay2 = mutableMapOf(
     0.0 to listOf(
-        Trigger("OPERATE", "SIZE_OP", 4.0, Program())
+        Trigger("OPERATE", "SIZE_OP", 4.0, program=testProgram)
     ),
     1.0 to listOf(
 
@@ -117,7 +119,7 @@ val triggersToPlay1 = mutableMapOf(
             "stroke_v" to triggerArg(0.8),
             "stroke_a" to triggerArg(1.0),
 
-            "radius" to triggerArg("SIZE_OP"), // TODO: how to connect this to the the SIZE machine/op above (shared among many circles)?
+            "radius" to triggerArg("SIZE_OP"), // TODO: how to connect this to the SIZE machine/op above (shared among many circles)?
 
             // need to deal with:
             // - radius
