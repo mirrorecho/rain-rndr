@@ -44,29 +44,78 @@ open class MachineFuncOp(
     fun stop() { this.machineFunc.stopOp(this) }
 }
 
-class Trigger(
-    val machineKey: String,
-    val opKey: String = autoKey(),
-    val dur: Double = 0.0, // TODO maybe: consider whether this could be based on some logic and not just a simple value!
-    val machinesToOps: Map<String, String> = mapOf(),
-    val program: Program,
-    ) {
+//class Trigger(
+//    val machineKey: String,
+//    val opKey: String = autoKey(),
+//    val dur: Double = 0.0, // TODO maybe: consider whether this could be based on some logic and not just a simple value!
+////    val machinesToOps: Map<String, String> = mapOf(), // NO! KISS!
+//    // ... i.e. a trigger must always only trigger a single op!!
+//    val program: Program,
+//    ) {
+//
+//    fun getProperties(): Map<String, Any> = mapOf() // TODO: add logic for getting map!
+//
+//    // TODO maybe: keep machinePalette (or even the machine) around?
+//    fun getMachine(machinePalette: Palette<RndrMachine>): RndrMachine? = machinePalette[this.machineKey]
+//
+//    fun triggerMachine(machinePalette: Palette<RndrMachine>) {
+//        val machine = getMachine(machinePalette)
+//        if (machine ==null ) println("$machineKey not found! Could not trigger machine.")
+//        else {
+//            // TODO: implement the op triggering
+//            machine.triggerOp( opKey, program, getProperties() )
+//        }
+//    }
+//
+//}
 
-    fun getProperties(): Map<String, Any> = mapOf() // TODO: add logic for getting map!
+
+// TODO: aha!? is the Trigger the same as the Op?
+class Trigger(
+    // NOTE: in order to KISS, assuming Trigger properties cannot be changed
+    // once trigger created (so this is a Map instead of a MutableMap)
+    val properties: Map<String, Any?> = mapOf(),
+
+    // NOTE: the key here is the relationship name, the value is either:
+    // - Null: use same op name as this trigger's op
+    // - any string value: use that op's name
+    val relatedMachinesToOps: Map<String, String?> = mapOf()
+) {
+    val machine: String by this.properties
+    val op: String by this.properties // TODO maybe: consider with op keys should be simple integer indices
+    val dur: Double by this.properties
+
+
+
+//    // TODO maybe: implement these
+//    val time: Double by this.properties
+//    val startAction: Int by this.properties // 0=nothing, 1=start, 2=free, 3="pause" (op is not running, but still exists)
+//    // TODO consider whether endAction is best specified by the trigger implementation (as opposed to the machine)
+//    val endAction: Int by this.properties // ditto values as startAction
+
+    // TODO IMPORTANT! If a trigger is triggering a new op, then it MUST be able to specify
+    //  what dependent/related machine ops to use
+    //  - default/blank ... create or reuse an op with the same name is this op
+
+
 
     // TODO maybe: keep machinePalette (or even the machine) around?
-    fun getMachine(machinePalette: Palette<RndrMachine>): RndrMachine? = machinePalette[this.machineKey]
+    fun getMachine(machinePalette: Palette<RndrMachine>): RndrMachine? = machinePalette[this.machine]
 
     fun triggerMachine(machinePalette: Palette<RndrMachine>) {
-        val machine = getMachine(machinePalette)
-        if (machine ==null ) println("$machineKey not found! Could not trigger machine.")
+        val machineNode = getMachine(machinePalette)
+        if (machine ==null ) println("$machine not found! Could not trigger machine.")
         else {
             // TODO: implement the op triggering
-            machine.triggerOp( opKey, program, getProperties() )
+            machineNode.triggerOp( opKey, program, getProperties() )
         }
     }
 
+
 }
+
+
+
 
 val testProgram = Program(true)
 
@@ -81,6 +130,21 @@ val triggersToPlay2 = mutableMapOf(
 
 val triggersToPlay1 = mutableMapOf(
     0.0 to listOf(
+        Trigger(mapOf(
+            "machine" to "CIRCLE1", // assume only 1 machine necessary for any given work?
+            "op" to null, // op name will be auto-generated key
+            "dur" to 4.0, // assume optional? (time could also just be when all associated machine durs are over?)
+            // TODO maybe: implement these:
+            "time" to 0.0,
+            "startAction" to 1, // 0=nothing, 1=start, 2=free, 3="pause" (op is not running, but still exists)
+            // TODO consider whether endAction is best specified by the machine implementation (as opposed to the trigger)
+            "endAction" to 0, // ditto values as startAction
+            ),
+            mapOf(
+                // omitting RADIUS because assuming in this example that Circle1 does not have a network-connected radius
+                "POSITION" to null, // use trigger's "op" value
+            )
+        ),
         mapOf(
             "machine" to "OPERATE", // assume only 1 machine necessary for any given work?
             "key" to "SIZE_OP",
