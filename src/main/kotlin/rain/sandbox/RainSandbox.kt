@@ -255,12 +255,14 @@ fun main() {
     // - easily bundle ops together (i.e. for all related ops for Circle machines)
     // - BUT, also allow easy way to use the same op in multiple places
     // - helps create pattern graph material (cells, trees, etc.), with op-specific information
-    // TODO: consider this question: is the MachineOperator really about
+
+    // consider this question: is the MachineOperator really about
     //  (1) the construction of the patterns?
     //  or (2) the playing of the patterns?
     //  or both?
-    //  ... IDEA! Use the existing pattern tree structure to specify ops
-    //  ... ... draw this out on paper
+
+    //  ... ANSWER: it's the SCORE!!!!!!!!!!!!!!!!!!!!!!
+
     class MachineOperator() {
 
     }
@@ -295,6 +297,48 @@ fun main() {
     println("----------------------------------------------------------------------------")
     println("----------------------------------------------------------------------------")
     println("----------------------------------------------------------------------------")
+
+    val height = ValueFunc("SHARED_HEIGHT", 1.0).createMe()
+    val alpha = ValueFunc("SHARED_ALPHA", 1.0).createMe()
+    val strokeColor = Color("STROKE_COLOR",
+        h = local<Double>("h", 1.0),
+        s = local<Double>("s", 1.0),
+        v = local<Double>("v", 1.0),
+        a = rel<ValueFunc>("SHARED_ALPHA"),
+    ).createMe()
+    val position1 = Position("POSITION_1",
+        x = local<Double>("x"),
+        y = rel<Double>("SHARED_HEIGHT"),
+    ).createMe()
+
+    val circle1 = Circle(
+        "CIRCLE_1",
+        position = rel<Position>("POSITION_1"),
+        fillColor = composite<Color>(
+            h = local("fill_h", 1.0), // TODO: OK to leave off (i.e. defaulting to Double)?
+            s = local<Double>("fill_s", 1.0),
+            v = local<Double>("fill_v", 1.0),
+            a = rel<ValueFunc>("SHARED_ALPHA"),
+        ),
+        strokeColor = rel<Color>("STROKE_COLOR"),
+        strokeWeight = local<Double>("stroke_weight"),
+        radius = local<Double>("radius"),
+    ).createMe()
+
+
+
+    val hh = Cell("HEIGHT_BOUNCE").make(machine="HEIGHT", act="SHARED_HEIGHT") {
+        value(0.9, 0.4),
+        dur(2.0, 1.0),
+    }
+    val p1 = Position("P1").make(machine="POSITION_1") {
+        x(0.4, 1.0)
+        dur(2.0, 1.0)
+    }
+    val circleCell = Cell("CIRCLE_CELL").make(machine="CIRCLE_1", act="C_1_a") {
+
+    }
+
 
 
     open class Yo(

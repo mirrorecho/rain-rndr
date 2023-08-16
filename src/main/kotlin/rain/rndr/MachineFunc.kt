@@ -31,30 +31,6 @@ open class NodeOrPropertyValue(
 }
 
 
-// DECISION: these are NOT nodes in the graph (should be arbitrarily able to spin up 1,000s of ops
-// whenever, without modifying the underlying graph)
-// TODO: confirm that the implementation below could be "animatoable" with an arbitrary # of
-//  Double-type properties. If not, and the animatlable property needs to specifically defined as an
-//  attribute on the class, then will need to rethink the implementation (probably so that an Op,
-//  if animatable, only includes a single Double value that is aninated).
-open class MachineFuncOp(
-    val machineFunc:MachineFunc,
-    val opKey:String = autoKey(),
-    val program: Program,
-    val properties: Map<String, Any?> = mapOf(), // TODO: TOO VAGUE?
-) {
-    var isRunning: Boolean = false
-
-    // TODO: does trigerring make sense in this context?
-//    fun trigger(properties: Map<String, Any?>) { throw NotImplementedError() }
-
-    fun stop() { this.machineFunc.stopOp(this) }
-
-    // TODO needs to be implemented to actually find by name
-    fun getChildOp(machineKey:String): MachineFuncOp = this
-
-}
-
 // TODO: or is this an interface?
 // TODO: can MachineFuncs have multiple instances? (assume YES)
 // MachineFunc is a factory for MachineFuncOp ...
@@ -66,41 +42,28 @@ open class MachineFunc(
 
     override val label = LocalContext.getLabel("MachineFunc", "Machine", "Leaf") { k, p, c -> MachineFunc(k, p, c) }
 
-    // TODO: consider whether to implement property accessor and/or update/animate methods via lambda or inheritance
-    open var triggerOp: (String, Program, Map<String, Any?>)-> MachineFuncOp = { opKey, program, properties ->
-        MachineFuncOp(this, opKey, program, mapCopy(this.properties, properties))
-    }
-    open var updateOp: (op: MachineFuncOp)-> Unit = {}
-    open var renderOp: (MachineFuncOp)->Unit = {}
-    open var stopOp: (op: MachineFuncOp)-> Unit = {}
+    // TODO maybe: lambdas the best idea here?
+    open var startAct: (act: Act) -> Unit = {}
+    open var updateAct: (update: Update)-> Unit = {} // TODO: even necessary? or should this be defined in Update?
+    open var renderAct: (act: Act)->Unit = {}
+//    open var stopAct: (act: Act)-> Unit = {} // assume not needed (logic in Update)
 
+    fun getOrUpdateAct(score:Score, name:String= autoKey(), actProperties: Map<String, Any?>) : Act {
 
-    // TODO: create an interface for accessing any running Op
-    // ... is below sufficient?
-
-    fun getOp(parentOp: MachineFuncOp) = parentOp.getChildOp(this.key)
-
-    fun opProperty(opKey: String, name:String) = context.getOp(this.key, opKey)!!.properties[name]
-
-    fun <T>opPropertyAs(opKey: String, name:String) = context.getOp(this.key, opKey)?.properties?.get(name) as T
-
-    // TODO: can we avoid having to pass runningTime as in below?
-//    fun trigger(properties: Map<String, Any?>) { throw NotImplementedError() }
-    fun trigger(runningTime:Double, program: Program, triggerProperties: Map<String, Any?>): MachineFuncOp {
-        val opKey:String = triggerProperties["OP"] as String? ?: rain.utils.autoKey()
-        val op = triggerOp(opKey, program, triggerProperties)
-        op.isRunning = true
-        return op
+        return Act(
+            name,
+            this,
+            properties.toMutableMap().apply { putAll(actProperties) },
+            score
+            // TODO: implement map of machine relationships to acts
+        )
     }
 
-    // should no longer be needed since all ops are now managed through the context
-//    fun triggerOff(op: MachineFuncOp) {
-//        stopOp(op)
-//        op.isRunning = false
-//        ops.remove(op.opKey)
-//    }
+    // TODO: below methods erroneous?
+    fun actProperty(act: Act, name:String) = act.properties[name]
+    fun <T>actPropertyAs(act: Act, name:String) = act.properties[name] as T
 
-    // TODO: ops management with dur (i.e. kill op when dur is up)
+    // TODO maybe: acts management with dur (i.e. kill op when dur is up)
 
     // TODO: helper method(s) to create this along with necessary relationships/nodes
     // (and do the same for specifics below)
@@ -117,8 +80,14 @@ open class ValueFunc(
 
     var value: Double by this.properties
 
-    fun opVal(opKey: String): Double {
-        return this.opPropertyAs(opKey, "value")
+    // TODO: below methods erroneous??
+    fun actVal(act: Act): Double {
+        return this.actPropertyAs(act, "value")
     }
+
+    fun relatedActVal(act: Act, relationshipName: String): Double {
+        return this.actVal(act.relatedAct(relationshipName))
+    }
+
 
 }

@@ -16,7 +16,8 @@ open class Circle(
 
     override val label = LocalContext.getLabel("Circle", "RndrMachine", "MachineFunc", "Machine", "Leaf") { k, p, c -> Circle(k, p, c) }
 
-    // TODO: instead? point to objects that could EITHER represent
+    // TODO: accommodate local storage...
+    //  ... point to objects that could EITHER represent
     //  - machine nodes
     //  - OR simple values (from this node's properties)
     //  - OR collections of values (from this node's properties)
@@ -27,15 +28,15 @@ open class Circle(
     val strokeWeight: ValueFunc by lazy { targetsAs("STROKE_WEIGHT") }
     val fillColor: Color? by lazy { targetsAs("FILL_COLOR") }
 
-    override var renderOp: (MachineFuncOp)->Unit = { op ->
-        op.program.apply {
+    override var renderAct: (Act)->Unit = { act ->
+        act.program.apply {
             // TODO: pass separate keys for each op
-            drawer.stroke = strokeColor?.colorRGBa(op)
-            drawer.strokeWeight = strokeWeight.opVal(op.opKey)
-            drawer.fill = fillColor?.colorRGBa(op.opKey)
+            drawer.stroke = strokeColor?.colorRGBa(act.relatedAct("STROKE_COLOR"))
+            drawer.strokeWeight = strokeWeight.actVal(act.relatedAct("STROKE_WEIGHT"))
+            drawer.fill = fillColor?.colorRGBa(act.relatedAct("FILL_COLOR"))
             drawer.circle(
-                position.vector(op.opKey),
-                radius.opVal(op.opKey)
+                position.vector(act.relatedAct("POSITION")),
+                act.relatedVal("RADIUS")
             )
         }
     }

@@ -10,6 +10,8 @@ open class Color(
     properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
 ): MachineFunc(key, properties, context) {
+
+    // TODO: accommodate local storage
     val h: ValueFunc by lazy { targetsAs("COLOR_H") }
     val s: ValueFunc by lazy { targetsAs("COLOR_S") }
     val v: ValueFunc by lazy { targetsAs("COLOR_V") }
@@ -17,9 +19,17 @@ open class Color(
 
     override val label = LocalContext.getLabel("Color", "MachineFunc", "Machine", "Leaf") { k, p, c -> Color(k, p, c) }
 
-    fun colorRGBa(opKey:String): ColorRGBa = ColorHSVa(
-        // TODO: these need to be separate keys!!!
-        h.opVal(opKey), s.opVal(opKey), v.opVal(opKey), a.opVal(opKey)
+    fun colorRGBa(act: Act): ColorRGBa = ColorHSVa(
+        // TODO: accommodate local storage
+        act.relatedVal("COLOR_H"),
+        act.relatedVal("COLOR_S"),
+        act.relatedVal("COLOR_V"),
+        act.relatedVal("COLOR_A"),
+
+//        h.actVal(act.getRelatedAct("COLOR_H")),
+//        s.actVal(act.getRelatedAct("COLOR_S")),
+//        v.actVal(act.getRelatedAct("COLOR_V")),
+//        a.actVal(act.getRelatedAct("COLOR_A")),
     ).toRGBa()
 
 }
