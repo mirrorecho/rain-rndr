@@ -298,27 +298,27 @@ fun main() {
     println("----------------------------------------------------------------------------")
     println("----------------------------------------------------------------------------")
 
-    val height = ValueFunc("SHARED_HEIGHT", 1.0).createMe()
-    val alpha = ValueFunc("SHARED_ALPHA", 1.0).createMe()
-    val strokeColor = Color("STROKE_COLOR",
+    val heightMachine = ValueFunc("SHARED_HEIGHT", 1.0).createMe()
+    val alphaMachine = ValueFunc("SHARED_ALPHA", 1.0).createMe()
+    val strokeColorMachine = Color("STROKE_COLOR",
         h = local<Double>("h", 1.0),
         s = local<Double>("s", 1.0),
         v = local<Double>("v", 1.0),
         a = rel<ValueFunc>("SHARED_ALPHA"),
     ).createMe()
-    val position1 = Position("POSITION_1",
+    val position1Machine = Position("POSITION_1",
         x = local<Double>("x"),
         y = rel<Double>("SHARED_HEIGHT"),
     ).createMe()
 
-    val circle1 = Circle(
+    val circle1Machine = Circle(
         "CIRCLE_1",
         position = rel<Position>("POSITION_1"),
         fillColor = composite<Color>(
             h = local("fill_h", 1.0), // TODO: OK to leave off (i.e. defaulting to Double)?
             s = local<Double>("fill_s", 1.0),
             v = local<Double>("fill_v", 1.0),
-            a = rel<ValueFunc>("SHARED_ALPHA"),
+            a = rel<ValueFunc>("SHARED_ALPHA", name="FILL_SHARED_ALPHA"),
         ),
         strokeColor = rel<Color>("STROKE_COLOR"),
         strokeWeight = local<Double>("stroke_weight"),
@@ -326,17 +326,30 @@ fun main() {
     ).createMe()
 
 
-
-    val hh = Cell("HEIGHT_BOUNCE").make(machine="HEIGHT", act="SHARED_HEIGHT") {
+    val heightBounce = Cell("HEIGHT_BOUNCE").make(machine="HEIGHT", act="SHARED_HEIGHT") {
         value(0.9, 0.4),
         dur(2.0, 1.0),
     }
-    val p1 = Position("P1").make(machine="POSITION_1") {
+    val p1 = Cell("P1").make(machine="POSITION_1") { // if no act specified, then actName=machineName
         x(0.4, 1.0)
         dur(2.0, 1.0)
     }
-    val circleCell = Cell("CIRCLE_CELL").make(machine="CIRCLE_1", act="C_1_a") {
+    val alpha1 = Cell(key="ALPHA_1").make(machine="SHARED_ALPHA", act="SHARED_ALPHA_1") {
+        value(0.9, 0.0)
+        dur(2.0, 1.0)
+    }
+    val alpha2 = Cell(key="ALPHA_2").make(machine="SHARED_ALPHA", act="SHARED_ALPHA_2") {
+        value(0.0, 0.9)
+        dur(2.0, 1.0)
+    }
+    val circleCell = Cell("CIRCLE_CELL").make(machine="CIRCLE_1", act="C_1_a",
+        rels=mapOf(
+            // ... IMPORTANT!!!!!! note that the key is the machine name
+            // "POSITION_1" to "POSITION_1"
+            "FILL_SHARED_ALPHA" to "SHARED_ALPHA_1"
 
+        )
+    ) {
     }
 
 
