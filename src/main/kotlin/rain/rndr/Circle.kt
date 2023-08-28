@@ -22,7 +22,10 @@ open class Circle(
     //  - OR simple values (from this node's properties)
     //  - OR collections of values (from this node's properties)
     // TODO: or maybe by lazy is not ideal here? think about it...
-    val radius: ValueFunc by lazy { targetsAs("RADIUS") }
+
+//    val radius: ValueFunc by lazy { targetsAs("RADIUS") }
+    val radius = MachineProperty(this, "RADIUS")
+
     val position: Position by lazy { targetsAs("POSITION") }
     val strokeColor: Color? by lazy { targetsAs("STROKE_COLOR") }
     val strokeWeight: ValueFunc by lazy { targetsAs("STROKE_WEIGHT") }

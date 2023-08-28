@@ -30,6 +30,17 @@ open class NodeOrPropertyValue(
     }
 }
 
+open class MachineProperty<T>(
+    val referenceNode: rain.language.Node,
+    val name:String,
+    
+) {
+    fun getValue(opName: String? = null) {
+
+    }
+
+}
+
 
 // TODO: or is this an interface?
 // TODO: can MachineFuncs have multiple instances? (assume YES)

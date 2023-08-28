@@ -318,17 +318,22 @@ fun main() {
             h = local("fill_h", 1.0), // TODO: OK to leave off (i.e. defaulting to Double)?
             s = local<Double>("fill_s", 1.0),
             v = local<Double>("fill_v", 1.0),
-            a = rel<ValueFunc>("SHARED_ALPHA", name="FILL_SHARED_ALPHA"),
+            a = rel<ValueFunc>("SHARED_ALPHA", name="FILL_SHARED_ALPHA"), // if set to "SHARED_ALPHA_1, then this would not have to be specified in the cell (see below)
         ),
         strokeColor = rel<Color>("STROKE_COLOR"),
         strokeWeight = local<Double>("stroke_weight"),
         radius = local<Double>("radius"),
     ).createMe()
 
+    // defaults = machineName -> actName -> relName
 
     val heightBounce = Cell("HEIGHT_BOUNCE").make(machine="HEIGHT", act="SHARED_HEIGHT") {
-        value(0.9, 0.4),
-        dur(2.0, 1.0),
+        value(0.9, 0.4)
+        dur(2.0, 1.0)
+    }
+    val strokeColor = Cell("STROKE_COLOR_1").make(machine="STROKE_COLOR", act="STROKE_COLOR_1") {
+        h(0.9, 0.4)
+        dur(2.0, 1.0)
     }
     val p1 = Cell("P1").make(machine="POSITION_1") { // if no act specified, then actName=machineName
         x(0.4, 1.0)
@@ -345,11 +350,16 @@ fun main() {
     val circleCell = Cell("CIRCLE_CELL").make(machine="CIRCLE_1", act="C_1_a",
         rels=mapOf(
             // ... IMPORTANT!!!!!! note that the key is the machine name
-            // "POSITION_1" to "POSITION_1"
-            "FILL_SHARED_ALPHA" to "SHARED_ALPHA_1"
-
+            // "POSITION_1" to "POSITION_1" // default since same name
+            "FILL_SHARED_ALPHA" to "SHARED_ALPHA_1",
+            "STROKE_COLOR" to "STROKE_COLOR_1",
         )
     ) {
+        seq(
+            "fill_h", 0.9, 1.0,
+            "fill_s", 1.0, 4.0,
+            "dur",    1.0, 4.0
+        )
     }
 
 
