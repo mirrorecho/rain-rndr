@@ -11,7 +11,7 @@ interface MachineAction {
 }
 
 
-// DECISION 1: these are NOT nodes in the graph (should be arbitrarily able to spin up 1,000s of ops
+// DECISION 1: these are NOT nodes in the graph (should be arbitrarily able to spin up 1,000s of actions
 // whenever, without modifying the underlying graph)
 // DECISION 2: Acts implement both triggering and operation (combines previous attempts at
 // creating a system for triggering in the score, and then separate operations of machines in
@@ -25,8 +25,6 @@ interface MachineAction {
 //  that could be an interesting idea with creative possibilities...
 class Act(
 
-    // NOTE: in order to KISS, assuming Act properties cannot be changed
-    // once act created (so this is a Map instead of a MutableMap)
     override val name: String = autoKey(),
     val machineFunc:MachineFunc,
 
