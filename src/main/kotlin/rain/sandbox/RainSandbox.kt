@@ -326,7 +326,7 @@ fun main() {
     ).createMe()
 
     // defaults = machineName -> actName -> relName
-
+    // TODO: how to streamline this?
     val heightBounce = Cell("HEIGHT_BOUNCE").make(machine="HEIGHT", act="SHARED_HEIGHT") {
         value(0.9, 0.4)
         dur(2.0, 1.0)
@@ -353,8 +353,7 @@ fun main() {
             // "POSITION_1" to "POSITION_1" // default since same name
             "FILL_SHARED_ALPHA" to "SHARED_ALPHA_1",
             "STROKE_COLOR" to "STROKE_COLOR_1",
-        )
-    ) {
+        )) {
         seq(
             "fill_h", 0.9, 1.0,
             "fill_s", 1.0, 4.0,

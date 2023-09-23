@@ -44,7 +44,7 @@ open class MachineProperty<T>(
 
 // TODO: or is this an interface?
 // TODO: can MachineFuncs have multiple instances? (assume YES)
-// MachineFunc is a factory for MachineFuncOp ...
+// MachineFunc is a factory for Act ...
 open class MachineFunc(
     key:String = autoKey(),
     properties: Map<String, Any?> = mapOf(),
