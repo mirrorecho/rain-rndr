@@ -10,11 +10,19 @@ open class Circle(
     key:String = rain.utils.autoKey(),
     properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
+
 ): RndrMachine(key, properties, context) {
 
     // TODO MAYBE: a base drawing class with standard attributes like color, position, etc.
 
+    // TODO... how can this factory work given the val parameters above??!!
     override val label = LocalContext.getLabel("Circle", "RndrMachine", "MachineFunc", "Machine", "Leaf") { k, p, c -> Circle(k, p, c) }
+
+    val radius:MachineProperty<Double> = MachineProperty("radius")
+    val position: MachineProperty<Position> = MachineProperty("radius")
+    val strokeColor:MachineProperty<Color?> = MachineProperty("strokeColor")
+    val strokeWeight:MachineProperty<Double> = MachineProperty("strokeWeight")
+    val fillColor:MachineProperty<Color?> = MachineProperty("fillColor")
 
     // TODO: accommodate local storage...
     //  ... point to objects that could EITHER represent
@@ -23,23 +31,16 @@ open class Circle(
     //  - OR collections of values (from this node's properties)
     // TODO: or maybe by lazy is not ideal here? think about it...
 
-//    val radius: ValueFunc by lazy { targetsAs("RADIUS") }
-    val radius = MachineProperty(this, "RADIUS")
-
-    val position: Position by lazy { targetsAs("POSITION") }
-    val strokeColor: Color? by lazy { targetsAs("STROKE_COLOR") }
-    val strokeWeight: ValueFunc by lazy { targetsAs("STROKE_WEIGHT") }
-    val fillColor: Color? by lazy { targetsAs("FILL_COLOR") }
 
     override var renderAct: (Act)->Unit = { act ->
         act.program.apply {
             // TODO: pass separate keys for each op
-            drawer.stroke = strokeColor?.colorRGBa(act.relatedAct("STROKE_COLOR"))
-            drawer.strokeWeight = strokeWeight.actVal(act.relatedAct("STROKE_WEIGHT"))
-            drawer.fill = fillColor?.colorRGBa(act.relatedAct("FILL_COLOR"))
+            drawer.stroke = strokeColor.getValue(act)?.colorRGBa(act) // TODO: is this second act passed here correct?
+            drawer.strokeWeight = strokeWeight.getValue(act) // TODO ditto...
+            drawer.fill = fillColor.getValue(act)?.colorRGBa(act) // TODO ditto...
             drawer.circle(
-                position.vector(act.relatedAct("POSITION")),
-                act.relatedVal("RADIUS")
+                position.getValue(act).vector(act), // TODO ditto...
+                radius.getValue(act)
             )
         }
     }

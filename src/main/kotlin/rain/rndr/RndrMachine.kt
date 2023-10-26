@@ -6,6 +6,7 @@ import rain.language.LocalContext
 
 
 
+// TODO: combine Machine and MachineFunc?
 // TODO: plan for connecting MachineFuncs to Machine via relationships
 // TODO: maybe this class should be abstract?
 // TODO: does this class have any purpose at all anymore now that renderOp also implemented on machineFunc?

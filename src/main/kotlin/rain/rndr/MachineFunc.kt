@@ -30,16 +30,7 @@ open class NodeOrPropertyValue(
     }
 }
 
-open class MachineProperty<T>(
-    val referenceNode: rain.language.Node,
-    val name:String,
-    
-) {
-    fun getValue(opName: String? = null) {
 
-    }
-
-}
 
 
 // TODO: or is this an interface?
@@ -99,6 +90,5 @@ open class ValueFunc(
     fun relatedActVal(act: Act, relationshipName: String): Double {
         return this.actVal(act.relatedAct(relationshipName))
     }
-
 
 }
