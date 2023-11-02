@@ -1,29 +1,32 @@
 package rain.rndr
 
-import org.openrndr.Program
-import rain.interfaces.ContextInterface
-import rain.language.LocalContext
-
+import rain.utils.*
+import rain.interfaces.*
+import rain.language.*
+import  rain.machines.*
+import rain.patterns.*
 
 
 // TODO: combine Machine and MachineFunc?
 // TODO: plan for connecting MachineFuncs to Machine via relationships
 // TODO: maybe this class should be abstract?
 // TODO: does this class have any purpose at all anymore now that renderOp also implemented on machineFunc?
-open class RndrMachine(
-    key:String = rain.utils.autoKey(),
+open class RndrMachine<T:Act>(
+    key:String = autoKey(),
     properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
-): MachineFunc(key, properties, context) {
+): Machine, Leaf(key, properties, context) { // TODO: is Leaf the best parent class? (Relationships might not be simple tree patterns.)
 
-    override val label = LocalContext.getLabel("RndrMachine", "MachineFunc", "Machine", "Leaf") { k, p, c -> RndrMachine(k, p, c) }
+    override val label = LocalContext.getLabel("RndrMachine", "Machine", "Leaf") { k, p, c -> RndrMachine<T>(k, p, c) }
 
+    open var createAct: (score:Score, name:String, actProperties: Map<String, Any?>) -> T? = {
+        s, n, p ->
+        null
+    }
 
-//    fun render() {
-//        ops.values.forEach {
-//            this.updateOp(it)
-//            this.renderOp(it)
-//        }
-//    }
+    // TODO: is this even used?
+    override fun trigger(runningTime:Double, properties: Map<String, Any?>) {
+        println("$runningTime: " + this.key + " " + properties.toString())
+    }
 
 }

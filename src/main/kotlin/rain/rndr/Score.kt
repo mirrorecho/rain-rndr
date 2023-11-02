@@ -63,7 +63,7 @@ class Score(
         println(pattern)
         if (pattern.isLeaf) {
             // TODO maybe: handle fancy logic like hooks here?
-            pattern.veins.forEach {
+            pattern.veins.forEach {c
                 val veinDur = it["dur"] as Double
                 if (pattern.simultaneous) {
                     createAction(runningTime, it)

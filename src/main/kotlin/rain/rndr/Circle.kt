@@ -7,16 +7,17 @@ import rain.language.LocalContext
 
 
 open class Circle(
-    key:String = rain.utils.autoKey(),
-    properties: Map<String, Any?> = mapOf(),
+    name:String = rain.utils.autoKey(),
+    override val rndrMachine: RndrMachine<Act>,
+    properties: MutableMap<String, Any?> = mutableMapOf(),
+    score: Score,
     context: ContextInterface = LocalContext,
-
-): RndrMachine(key, properties, context) {
+): Act(name, rndrMachine, properties, score) {
 
     // TODO MAYBE: a base drawing class with standard attributes like color, position, etc.
 
     // TODO... how can this factory work given the val parameters above??!!
-    override val label = LocalContext.getLabel("Circle", "RndrMachine", "MachineFunc", "Machine", "Leaf") { k, p, c -> Circle(k, p, c) }
+//    override val label = LocalContext.getLabel("Circle", "RndrMachine", "MachineFunc", "Machine", "Leaf") { k, p, c -> Circle(k, p, c) }
 
     val radius:MachineProperty<Double> = MachineProperty("radius")
     val position: MachineProperty<Position> = MachineProperty("radius")

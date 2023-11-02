@@ -23,10 +23,10 @@ interface MachineAction {
 
 // TODO maybe: consider whether a trigger would ever be reused...
 //  that could be an interesting idea with creative possibilities...
-class Act(
+open class Act(
 
     override val name: String = autoKey(),
-    val machineFunc:MachineFunc,
+    open val rndrMachine: RndrMachine<Act>,
 
     // this is mutable because often an Act will need to be created in order to relate to,
     // and then updated later to add data
@@ -62,7 +62,7 @@ class Act(
 
     fun relatedVal(relationshipName:String): Double = relatedAct(relationshipName).properties["value"] as Double
 
-    // TODO this logic should be moved to the score creation (may get masty)
+    // TODO this logic should be moved to the score creation (may get nasty)
 //    fun getMachine(machinePalette: Palette<RndrMachine>): RndrMachine? = machinePalette[this.machine]
 
     // TODO: implement this in score creation (may get nasty)
