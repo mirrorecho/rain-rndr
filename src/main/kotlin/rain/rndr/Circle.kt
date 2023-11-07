@@ -8,10 +8,9 @@ import rain.language.LocalContext
 
 open class Circle(
     name:String = rain.utils.autoKey(),
-    override val rndrMachine: RndrMachine<Act>,
+    override val rndrMachine: RndrMachine<Circle>,
     properties: MutableMap<String, Any?> = mutableMapOf(),
     score: Score,
-    context: ContextInterface = LocalContext,
 ): Act(name, rndrMachine, properties, score) {
 
     // TODO MAYBE: a base drawing class with standard attributes like color, position, etc.
@@ -33,17 +32,17 @@ open class Circle(
     // TODO: or maybe by lazy is not ideal here? think about it...
 
 
-    override var renderAct: (Act)->Unit = { act ->
-        act.program.apply {
-            // TODO: pass separate keys for each op
-            drawer.stroke = strokeColor.getValue(act)?.colorRGBa(act) // TODO: is this second act passed here correct?
-            drawer.strokeWeight = strokeWeight.getValue(act) // TODO ditto...
-            drawer.fill = fillColor.getValue(act)?.colorRGBa(act) // TODO ditto...
-            drawer.circle(
-                position.getValue(act).vector(act), // TODO ditto...
-                radius.getValue(act)
-            )
-        }
-    }
+//    override var renderAct: (Act)->Unit = { act ->
+//        act.program.apply {
+//            // TODO: pass separate keys for each op
+//            drawer.stroke = strokeColor.getValue(act)?.colorRGBa(act) // TODO: is this second act passed here correct?
+//            drawer.strokeWeight = strokeWeight.getValue(act) // TODO ditto...
+//            drawer.fill = fillColor.getValue(act)?.colorRGBa(act) // TODO ditto...
+//            drawer.circle(
+//                position.getValue(act).vector(act), // TODO ditto...
+//                radius.getValue(act)
+//            )
+//        }
+//    }
 
 }

@@ -5,6 +5,7 @@ import org.openrndr.Program
 
 // represents an action of a machine!
 // created at the time of score construction!
+// TODO: is this interface even worth it??
 interface MachineAction {
     val name: String
     val properties: Map<String, Any?>
@@ -26,12 +27,14 @@ interface MachineAction {
 open class Act(
 
     override val name: String = autoKey(),
-    open val rndrMachine: RndrMachine<Act>,
+    open val rndrMachine: RndrMachine<*>,
 
     // this is mutable because often an Act will need to be created in order to relate to,
     // and then updated later to add data
     override val properties: MutableMap<String, Any?> = mutableMapOf(),
     val score: Score,
+
+    // TODO maybe: include context? Would it be used?
 
     // the key is the relationship name, the value is the Act object to use for that related machine
     // this is mutable for the same reason as properties above
@@ -54,7 +57,7 @@ open class Act(
 //    // TODO consider whether endAction is best specified by the trigger implementation (as opposed to the machine)
 //    val endAction: Int by this.properties // ditto values as startAction
 
-    fun start() { this.machineFunc.startAct(this)  }
+//    fun start() { this.machineFunc.startAct(this)  }
 
 //    fun stop() { this.machineFunc.stopAct(this) } // assume not needed
 
@@ -76,13 +79,13 @@ open class Act(
 //    }
 }
 
-class Update(
-
-    // NOTE: in order to KISS, assuming Act properties cannot be changed
-    // once act created (so this is a Map instead of a MutableMap)
-    override val name: String = autoKey(), // TODO: maybe Update doesn't need to be named?
-    val machineFunc:MachineFunc, // TODO: is this really necessary on an udpate?
-    override val properties: Map<String, Any?> = mapOf(),
-
-): MachineAction {
-}
+//class Update(
+//
+//    // NOTE: in order to KISS, assuming Act properties cannot be changed
+//    // once act created (so this is a Map instead of a MutableMap)
+//    override val name: String = autoKey(), // TODO: maybe Update doesn't need to be named?
+//    val machineFunc:MachineFunc, // TODO: is this really necessary on an udpate?
+//    override val properties: Map<String, Any?> = mapOf(),
+//
+//): MachineAction {
+//}

@@ -6,10 +6,11 @@ import rain.language.LocalContext
 import rain.language.Relationship
 
 open class Position(
-    key:String = rain.utils.autoKey(),
-    properties: Map<String, Any?> = mapOf(),
-    context: ContextInterface = LocalContext,
-): MachineFunc(key, properties, context) {
+    name:String = rain.utils.autoKey(),
+    override val rndrMachine: RndrMachine<Position>,
+    properties: MutableMap<String, Any?> = mutableMapOf(),
+    score: Score,
+): Act(name, rndrMachine, properties, score) {
     // TODO: accommodate local storage
     val x: ValueFunc by lazy { targetsAs("POSITION_X") }
     val y: ValueFunc by lazy { targetsAs("POSITION_Y") }

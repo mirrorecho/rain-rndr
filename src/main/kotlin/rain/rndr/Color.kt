@@ -6,10 +6,11 @@ import rain.interfaces.ContextInterface
 import rain.language.LocalContext
 
 open class Color(
-    key:String = rain.utils.autoKey(),
-    properties: Map<String, Any?> = mapOf(),
-    context: ContextInterface = LocalContext,
-): MachineFunc(key, properties, context) {
+    name:String = rain.utils.autoKey(),
+    override val rndrMachine: RndrMachine<Color>,
+    properties: MutableMap<String, Any?> = mutableMapOf(),
+    score: Score,
+): Act(name, rndrMachine, properties, score) {
 
     // TODO: accommodate local storage
     val h: ValueFunc by lazy { targetsAs("COLOR_H") }

@@ -21,5 +21,4 @@ open class FancyNode(
         set(v) {
             this.properties["yo"] = v
         }
-
 }
