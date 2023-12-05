@@ -14,7 +14,7 @@ import rain.patterns.*
 
 
 // TODO: reconfigure so Act type param not needed at class level, only at fun level
-open class RndrMachine(
+open class RndrMachine<T:Act>(
     key:String = autoKey(),
     properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
@@ -22,14 +22,31 @@ open class RndrMachine(
 
     override val label = LocalContext.getLabel("RndrMachine", "Machine", "Leaf") { k, p, c -> RndrMachine<T>(k, p, c) }
 
-    open var createAct: <T>(score:Score, name:String, actProperties: Map<String, Any?>) -> T? = {
-        s, n, p ->
-        null
+    val actFactory: (tr:Trigger<T>)->T get() = getFancyProperty< (tr:Trigger<T>)->T >("ACT_FACTORY").value
+
+    fun setFactory(factory: (tr:Trigger<T>)->T) {
+        this.setProperty("ACT_FACTORY", factory, true )
     }
 
-    // TODO: is this even used?
-    override fun trigger(runningTime:Double, properties: Map<String, Any?>) {
-        println("$runningTime: " + this.key + " " + properties.toString())
+    fun <RT:Act>getRelatedAct(relationshipName: String, actName: String?=null): RT {
+        return this.targetsAs<RndrMachine<RT>>(relationshipName).getAct(actName)
     }
+
+    fun getAct(actName: String?=null): T? {
+
+    }
+
+    // TODO: NOTE - no override since takes a Trigger as arg... awkward?
+//    fun trigger(runningTime:Double, properties: Map<String, Any?>) {
+//        val act: T = this.actFactory(this)
+//    }
 
 }
+
+fun <T:Act>createRndrMachine(factory: (tr:Trigger<T>)->T): RndrMachine<T> {
+    return RndrMachine<T>().apply {
+        setFactory(factory)
+        createMe() // TODO: should the create come before or after setFactory?
+    }
+}
+

@@ -362,12 +362,35 @@ fun main() {
     }
 
 
-    open class Yo(
+    fun yo() {
+        var position1 = createRndrMachine {
+            Position(
+                x = it.propertyAsValueAct("x"),
+                y = it.propertyAsValueAct("y")
+            )
+        }
+
+        var circle1 = createRndrMachine {
+            Circle(
+                position = it.rndrMachine.getRelatedAct("POSITION")
+            )
+        }
+
+        circle1.relate("POSITION", position1)
+    }
+
+
+
+
+
+    open class Yo<T>(
         key:String = rain.utils.autoKey(),
         properties: Map<String, Any?> = mapOf(),
         context: ContextInterface = LocalContext,
     ): Node(key, properties, context) {
         override val label = LocalContext.getLabel("Yo", "Machine") { k, p, c -> Yo(k, p, c) }
     }
+
+    val yo = Yo<String>()
 
 }

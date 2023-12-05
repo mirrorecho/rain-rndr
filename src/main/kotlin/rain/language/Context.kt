@@ -3,7 +3,6 @@ package rain.language
 import org.openrndr.Program
 import rain.interfaces.*
 import rain.patterns.Cell
-import rain.rndr.MachineFuncOp
 
 open class Context<G:GraphInterface>(
     override val graph: G
@@ -43,11 +42,25 @@ open class Context<G:GraphInterface>(
 
     private val fancyProperties: MutableMap<String, FancyProperty<*>> = mutableMapOf()
 
+    override fun setFancyProperty(fancyProperty: FancyProperty<*>) {
+        fancyProperties[fancyProperty.universalName] = fancyProperty
+    }
+
+    override fun <T>getFancyProperty(universalName: String): FancyProperty<T> {
+        return fancyProperties[universalName] as FancyProperty<T>
+    }
+
+    private val actRegistry: MutableMap<Pair<String, String>, Act> = mutableMapOf()
+
+    fun yo() {
+
+    }
+
     // TODO: remove Ops Implementation ... !!!!
 //    // Ops implementation:
 //    // TODO maybe: Ops implementation could live with a MachinePalette, instead of with this Context?
 //
-//    private val opsRegistry: MutableMap<Pair<String, String>, MachineFuncOp> = mutableMapOf()
+
 //
 //    override fun getOp(machineKey: String, opKey:String): MachineFuncOp? = opsRegistry[Pair(machineKey, opKey)]
 //

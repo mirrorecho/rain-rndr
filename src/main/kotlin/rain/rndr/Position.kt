@@ -7,15 +7,9 @@ import rain.language.Relationship
 
 open class Position(
     name:String = rain.utils.autoKey(),
-    override val rndrMachine: RndrMachine<Position>,
-    properties: MutableMap<String, Any?> = mutableMapOf(),
-    score: Score,
-): Act(name, rndrMachine, properties, score) {
-    // TODO: accommodate local storage
-    val x: ValueFunc by lazy { targetsAs("POSITION_X") }
-    val y: ValueFunc by lazy { targetsAs("POSITION_Y") }
-
-    override val label = LocalContext.getLabel("Position", "MachineFunc", "Machine", "Leaf") { k, p, c -> Position(k, p, c) }
+    var x: ValueAct = ValueAct(),
+    var y: ValueAct = ValueAct(),
+): Act(name) {
 
     // TODO: what was the idea of the below method?
 //    fun setTargets(x:MachineFunc?, y:MachineFunc?) {
@@ -27,8 +21,8 @@ open class Position(
 //    }
 
     // TODO: accommodate local storage
-    fun vector(act:Act): Vector2 = Vector2(
-        act.relatedVal("POSITION_X"),
-        act.relatedVal("POSITION_Y"),
+    fun vector(): Vector2 = Vector2(
+        x.value,
+        y.value,
     )
 }

@@ -2,53 +2,48 @@ package rain.rndr
 
 import rain.utils.*
 import org.openrndr.Program
-
-// represents an action of a machine!
-// created at the time of score construction!
-// TODO: is this interface even worth it??
-interface MachineAction {
-    val name: String
-    val properties: Map<String, Any?>
-}
+import org.openrndr.animatable.Animatable
+import rain.interfaces.ContextInterface
+import rain.language.LocalContext
 
 
 // DECISION 1: these are NOT nodes in the graph (should be arbitrarily able to spin up 1,000s of actions
 // whenever, without modifying the underlying graph)
-// DECISION 2: Acts implement both triggering and operation (combines previous attempts at
-// creating a system for triggering in the score, and then separate operations of machines in
-// some kind of data structure)
-// TODO: confirm that the implementation below could be "animatoable" with an arbitrary # of
-//  Double-type properties. If not, and the animatlable property needs to specifically defined as an
-//  attribute on the class, then will need to rethink the implementation (probably so that an Op,
-//  if animatable, only includes a single Double value that is animated).
+// DECISION 2: Acts are the core helper implementation for interacting with OPENRNDR
+// DECISION 3: Acts are animatable
 
 // TODO maybe: consider whether a trigger would ever be reused...
 //  that could be an interesting idea with creative possibilities...
-open class Act(
 
-    override val name: String = autoKey(),
-    open val rndrMachine: RndrMachine<*>,
 
-    // this is mutable because often an Act will need to be created in order to relate to,
-    // and then updated later to add data
-    override val properties: MutableMap<String, Any?> = mutableMapOf(),
-    val score: Score,
+abstract class Act(
 
-    // TODO maybe: include context? Would it be used?
+    val name: String = autoKey(),
+
+    // TODO: any of these needed?
+//    val rndrMachine: RndrMachine<*>,
+//    val properties: MutableMap<String, Any?> = mutableMapOf(),
+//    val score: Score,
+//    val program: Program = score.program
+//    context: ContextInterface = LocalContext,
+
 
     // the key is the relationship name, the value is the Act object to use for that related machine
     // this is mutable for the same reason as properties above
     // ... TODO: implement logic to create this in score creation ... expect this to get NASTY!
     val relatedMachinesToActs: MutableMap<String, Act> = mutableMapOf()
 
-): MachineAction {
+): Animatable() {
     // val machine: String by this.properties // redundant since the MachineFunc object will need to be specified at the time of instantiation
 
-    val dur: Double by this.properties
+    var dur: Double = 0.0 // TODO: how is this contolled?
+    var isRunning: Boolean = false // TODO: used?
 
-    val program: Program = score.program
+//    fun <T>createActProperty(name: String, relationshipLabel: String? = null): ActProperty<T> {
+//        return ActProperty(name, this, relationshipLabel)
+//    }
 
-    var isRunning: Boolean = false
+    open fun render(score: Score) { }
 
 
 //    // TODO maybe: implement these
@@ -61,9 +56,11 @@ open class Act(
 
 //    fun stop() { this.machineFunc.stopAct(this) } // assume not needed
 
-    fun relatedAct(relationshipName:String): Act = relatedMachinesToActs[relationshipName]!!
+    // TODO: used? or through machines?
+//    fun relatedAct(relationshipName:String): Act = relatedMachinesToActs[relationshipName]!!
 
-    fun relatedVal(relationshipName:String): Double = relatedAct(relationshipName).properties["value"] as Double
+    // TODO: used? or through machines?
+//    fun relatedVal(relationshipName:String): Double = relatedAct(relationshipName).properties["value"] as Double
 
     // TODO this logic should be moved to the score creation (may get nasty)
 //    fun getMachine(machinePalette: Palette<RndrMachine>): RndrMachine? = machinePalette[this.machine]
@@ -79,13 +76,9 @@ open class Act(
 //    }
 }
 
-//class Update(
-//
-//    // NOTE: in order to KISS, assuming Act properties cannot be changed
-//    // once act created (so this is a Map instead of a MutableMap)
-//    override val name: String = autoKey(), // TODO: maybe Update doesn't need to be named?
-//    val machineFunc:MachineFunc, // TODO: is this really necessary on an udpate?
-//    override val properties: Map<String, Any?> = mapOf(),
-//
-//): MachineAction {
-//}
+open class ValueAct(
+    name: String = autoKey(),
+    var value: Double = 0.0
+): Act(name) {
+
+}

@@ -20,6 +20,38 @@ abstract class Item(
 
     override val selectSelf: Select get() = SelfSelect(this.context, this)
 
+    fun <T>getFancyProperty(fancyName: String): FancyProperty<T> {
+        return context.getFancyProperty(fancyName)
+    }
+
+    fun setFancyProperty(fancyProperty: FancyProperty<*>) {
+        properties[fancyProperty.name] = fancyProperty.graphValue
+        context.setFancyProperty(fancyProperty)
+    }
+
+    // TODO: consider if a setProperty is warranted as well
+    fun <T>getProperty(name: String): T? {
+        properties[name]?.let {
+            with(it.toString()) {
+                if (this.startsWith(":FANCY:")) {
+                    return this@Item.getFancyProperty<T>(this).value
+                } else {
+                    return it as T
+                }
+            }
+        }
+        return null
+    }
+
+    // TODO: will I end up using this?
+    fun setProperty(name: String, value: Any, isFancy:Boolean=false) {
+        if (isFancy) {
+            setFancyProperty(FancyProperty(name, value, context)) // TODO: ?? hmm why is this OK as opposed to needing setFancyProperty<T>
+        } else {
+            this.properties[name] = value
+        }
+    }
+
 }
 
 // ===========================================================================================================

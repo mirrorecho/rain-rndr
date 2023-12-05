@@ -16,8 +16,12 @@ class Score(
     val program: Program
 ) {
     // TODO maybe: should the key be a pair of the machone node key PLUS the act name? (as opposed to just the act name?)
-    private val actions: MutableMap<String, Act> = mutableMapOf()
+    private val acts: MutableMap<String, Act> = mutableMapOf()
     private val timeCodes: MutableMap<Double, MutableList<MachineAction>> = mutableMapOf()
+
+    fun getAct(machineKey: String, actName: String? = null) {
+
+    }
 
     fun updateOrCreateAct(machineFunc: MachineFunc, actName: String): Act{ //TODO maybe: machine better here than machineName?
         val act = actions.getOrPut(actName) {

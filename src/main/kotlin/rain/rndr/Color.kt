@@ -7,30 +7,20 @@ import rain.language.LocalContext
 
 open class Color(
     name:String = rain.utils.autoKey(),
-    override val rndrMachine: RndrMachine<Color>,
-    properties: MutableMap<String, Any?> = mutableMapOf(),
-    score: Score,
-): Act(name, rndrMachine, properties, score) {
+    var h: ValueAct = ValueAct(),
+    var s: ValueAct = ValueAct(),
+    var v: ValueAct = ValueAct(),
+    var a: ValueAct = ValueAct(),
+): Act(name) {
 
-    // TODO: accommodate local storage
-    val h: ValueFunc by lazy { targetsAs("COLOR_H") }
-    val s: ValueFunc by lazy { targetsAs("COLOR_S") }
-    val v: ValueFunc by lazy { targetsAs("COLOR_V") }
-    val a: ValueFunc by lazy { targetsAs("COLOR_A") }
+    fun colorHSVa() = ColorHSVa(
+        h.value,
+        s.value,
+        v.value,
+        a.value,
+    )
 
-    override val label = LocalContext.getLabel("Color", "MachineFunc", "Machine", "Leaf") { k, p, c -> Color(k, p, c) }
+    fun colorRGBa(): ColorRGBa = colorHSVa().toRGBa()
 
-    fun colorRGBa(act: Act): ColorRGBa = ColorHSVa(
-        // TODO: accommodate local storage
-        act.relatedVal("COLOR_H"),
-        act.relatedVal("COLOR_S"),
-        act.relatedVal("COLOR_V"),
-        act.relatedVal("COLOR_A"),
-
-//        h.actVal(act.getRelatedAct("COLOR_H")),
-//        s.actVal(act.getRelatedAct("COLOR_S")),
-//        v.actVal(act.getRelatedAct("COLOR_V")),
-//        a.actVal(act.getRelatedAct("COLOR_A")),
-    ).toRGBa()
 
 }
