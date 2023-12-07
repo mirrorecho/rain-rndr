@@ -24,6 +24,8 @@ open class RndrMachine<T:Act>(
 
     val actFactory: (tr:Trigger<T>)->T get() = getFancyProperty< (tr:Trigger<T>)->T >("ACT_FACTORY").value
 
+    var single: Boolean by this.properties
+
     fun setFactory(factory: (tr:Trigger<T>)->T) {
         this.setProperty("ACT_FACTORY", factory, true )
     }
@@ -43,8 +45,9 @@ open class RndrMachine<T:Act>(
 
 }
 
-fun <T:Act>createRndrMachine(factory: (tr:Trigger<T>)->T): RndrMachine<T> {
+fun <T:Act>createRndrMachine(single:Boolean=true, factory: (tr:Trigger<T>)->T): RndrMachine<T> {
     return RndrMachine<T>().apply {
+        this.single = single
         setFactory(factory)
         createMe() // TODO: should the create come before or after setFactory?
     }

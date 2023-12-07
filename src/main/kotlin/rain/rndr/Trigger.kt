@@ -3,7 +3,7 @@ package rain.rndr
 class Trigger<T:Act>(
     val score: Score,
     val rndrMachine: RndrMachine<T>,
-    val act:T,
+    val act:T? = null, // passed if triggering an existing act
     val runningTime:Double = 0.0, // TODO: used?
     val properties: Map<String, Any?>
 ) {
