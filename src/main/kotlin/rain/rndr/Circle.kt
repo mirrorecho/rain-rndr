@@ -22,15 +22,6 @@ open class Circle(
     // TODO... how can this factory work given the val parameters above??!!
 //    override val label = LocalContext.getLabel("Circle", "RndrMachine", "MachineFunc", "Machine", "Leaf") { k, p, c -> Circle(k, p, c) }
 
-
-
-    // TODO: accommodate local storage...
-    //  ... point to objects that could EITHER represent
-    //  - machine nodes
-    //  - OR simple values (from this node's properties)
-    //  - OR collections of values (from this node's properties)
-    // TODO: or maybe by lazy is not ideal here? think about it...
-
     override fun render(score: Score) {
         score.program.apply {
             drawer.stroke = strokeColor.colorRGBa()

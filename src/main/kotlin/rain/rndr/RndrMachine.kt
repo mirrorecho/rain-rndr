@@ -14,29 +14,31 @@ import rain.patterns.*
 
 
 // TODO: reconfigure so Act type param not needed at class level, only at fun level
-open class RndrMachine<T:Act>(
+open class RndrMachine(
     key:String = autoKey(),
     properties: Map<String, Any?> = mapOf(),
     context: ContextInterface = LocalContext,
 ): Machine, Leaf(key, properties, context) { // TODO: is Leaf the best parent class? (Relationships might not be simple tree patterns.)
 
-    override val label = LocalContext.getLabel("RndrMachine", "Machine", "Leaf") { k, p, c -> RndrMachine<T>(k, p, c) }
+    override val label = LocalContext.getLabel("RndrMachine", "Machine", "Leaf") { k, p, c -> RndrMachine(k, p, c) }
 
-    val actFactory: (tr:Trigger<T>)->T get() = getFancyProperty< (tr:Trigger<T>)->T >("ACT_FACTORY").value
+    val actFactory: (tr:Trigger)->Unit get() = getFancyProperty< (tr:Trigger)->Unit >("ACT_FACTORY").value
 
     var single: Boolean by this.properties
 
-    fun setFactory(factory: (tr:Trigger<T>)->T) {
+    fun setFactory(factory: (tr:Trigger)->Unit) {
         this.setProperty("ACT_FACTORY", factory, true )
     }
 
-    fun <RT:Act>getRelatedAct(relationshipName: String, actName: String?=null): RT {
-        return this.targetsAs<RndrMachine<RT>>(relationshipName).getAct(actName)
-    }
+    // TODO: acts of a particular type should no longer be associated with particular RndrMachines
+//    fun <RT:Act>getRelatedAct(relationshipName: String, actName: String?=null): RT {
+//        return this.targetsAs<RndrMachine>(relationshipName).getAct(actName)
+//    }
 
-    fun getAct(actName: String?=null): T? {
-
-    }
+    // TODO: acts of a particular type should no longer be associated with particular RndrMachines
+//    fun <T>getAct(actName: String?=null): T? {
+//
+//    }
 
     // TODO: NOTE - no override since takes a Trigger as arg... awkward?
 //    fun trigger(runningTime:Double, properties: Map<String, Any?>) {
@@ -45,8 +47,8 @@ open class RndrMachine<T:Act>(
 
 }
 
-fun <T:Act>createRndrMachine(single:Boolean=true, factory: (tr:Trigger<T>)->T): RndrMachine<T> {
-    return RndrMachine<T>().apply {
+fun createRndrMachine(single:Boolean=true, factory: (tr:Trigger)->Unit): RndrMachine {
+    return RndrMachine().apply {
         this.single = single
         setFactory(factory)
         createMe() // TODO: should the create come before or after setFactory?
