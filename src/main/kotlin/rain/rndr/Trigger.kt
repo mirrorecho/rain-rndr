@@ -14,4 +14,5 @@ class Trigger<T:Act>(
     fun <P>propertyAs(propertyName:String):P {
         return properties[propertyName] as P
     }
+
 }
