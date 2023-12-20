@@ -361,23 +361,25 @@ fun main() {
         )
     }
 
+    println("----------------------------------------------------------------------------")
+    println("----------------------------------------------------------------------------")
+    println("----------------------------------------------------------------------------")
 
-    fun yo() {
-        var position1 = createRndrMachine {
-            Position(
-                x = it.propertyAsValueAct("x"),
-                y = it.propertyAsValueAct("y")
-            )
-        }
-
-        var circle1 = createRndrMachine {
-            Circle(
-                position = it.rndrMachine.getRelatedAct("POSITION")
-            )
-        }
-
-        circle1.relate("POSITION", position1)
+    val position1 = createRndrMachine {
+        Position(
+            x = it.propertyAsValueAct("x"),
+            y = it.propertyAsValueAct("y")
+        )
     }
+
+    val circle1 = createRndrMachine {
+        Circle(
+            position = it.relatedAct("POSITION")
+        )
+    }
+
+    circle1.relate("POSITION", position1)
+
 
 
 
