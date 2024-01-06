@@ -365,10 +365,13 @@ fun main() {
     println("----------------------------------------------------------------------------")
     println("----------------------------------------------------------------------------")
 
-    val position1 = createRndrMachine {
+    createValues(true,"X", "Y")
+
+
+    val position1 = createRndrMachine("POSITION_1") {
         Position(
-            x = it.propertyAsValueAct("x"),
-            y = it.propertyAsValueAct("y")
+            x = it.triggerRelated("X", properties= mapOf()),
+            y = it.triggerRelated("Y", properties= mapOf()),
         )
     }
 

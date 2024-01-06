@@ -45,11 +45,16 @@ open class RndrMachine<T:Act>(
 
 }
 
-fun <T:Act>createRndrMachine(single:Boolean=true, factory: (tr:Trigger<T>)->T): RndrMachine<T> {
-    return RndrMachine<T>().apply {
+fun <T:Act>createRndrMachine(key:String= autoKey(),  single:Boolean=true, factory: (tr:Trigger<T>)->T): RndrMachine<T> {
+    return RndrMachine<T>(key).apply {
         this.single = single
         setFactory(factory)
         createMe() // TODO: should the create come before or after setFactory?
     }
 }
 
+fun createValues(single:Boolean=true, vararg keys: String) {
+    keys.forEach { k ->
+        createRndrMachine(k, single) { ValueAct() }
+    }
+}
