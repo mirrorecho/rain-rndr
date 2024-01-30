@@ -12,14 +12,7 @@ open class Leaf(
     context: ContextInterface = LocalContext,
 ): Pattern, Node(key, properties, context) {
 
-    companion object : ItemCompanion() {
-        override val label: Label<Leaf> = Label(
-            factory = { k, p, c -> Leaf(k, p, c) },
-            labels = listOf("Leaf", "Pattern"),
-        )
-    }
-    override val label: LabelInterface get() = Leaf.label
-
+    override val label = LocalContext.getLabel( "Leaf", "CellPattern", "Pattern") { k, p, c -> Leaf(k, p, c) }
 
     // TODO: implement the below
 //    # TODO: assume this doesn't need to be serialized?

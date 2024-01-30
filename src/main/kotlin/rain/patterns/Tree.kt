@@ -35,9 +35,13 @@ open class Tree(
 
         // creates all Cue nodes for the extension (inc. Contains and Cues relationships)
         val cueNodes = patterns.map {
-            val cue = Cue().createMe() as Cue
-            Contains(source_key = this.key, target_key = cue.key).createMe()
-            Cues(source_key = cue.key, target_key = it.key).createMe()
+            val cue = Cue().apply { createMe() }
+
+            relate("CONTAINS", cue)
+            //Contains(source_key = this.key, target_key = cue.key).createMe()
+
+            cue.relate("CUES", it as Node)
+            // Cues(source_key = cue.key, target_key = it.key).createMe()
             cue
         }
 

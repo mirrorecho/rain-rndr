@@ -43,7 +43,9 @@ abstract class Act(
 //        return ActProperty(name, this, relationshipLabel)
 //    }
 
-    open fun render(score: Score) { }
+    // TODO maybe: consider a playScope object (instead of separately passing score and program)
+    //   ... could also keep track of other stuff on it
+    open fun render(score: Score, program: Program) { }
 
 
 //    // TODO maybe: implement these

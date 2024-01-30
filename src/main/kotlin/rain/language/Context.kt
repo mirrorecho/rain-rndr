@@ -37,6 +37,7 @@ open class Context<G:GraphInterface>(
         vararg labels:String,
         factory:(key:String, properties: Map<String, Any?>, context:ContextInterface)-> T
     ): LabelInterface {
+        // TODO: is this called over and over and over with every node creation???? (although maybe that's OK)
         return get(labels[0]) ?: makeLabel(labels.toList(), factory)
     }
 
@@ -50,11 +51,9 @@ open class Context<G:GraphInterface>(
         return fancyProperties[universalName] as FancyProperty<T>
     }
 
-    private val actRegistry: MutableMap<Pair<String, String>, Act> = mutableMapOf()
+    // TODO: assume below not needed (registry is now with the score object)
+    // private val actRegistry: MutableMap<Pair<String, String>, Act> = mutableMapOf()
 
-    fun yo() {
-
-    }
 
     // TODO: remove Ops Implementation ... !!!!
 //    // Ops implementation:

@@ -12,68 +12,59 @@ import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 class Score(
-    val machinePalette: Palette<MachineFunc>,
-    val program: Program
+    val machinePalette: Palette<RndrMachine<Act>>,
+//    val program: Program
 ) {
+
+    // TODO... used now with new trigger model?
     // TODO maybe: should the key be a pair of the machone node key PLUS the act name? (as opposed to just the act name?)
     private val acts: MutableMap<String, Act> = mutableMapOf()
-    private val timeCodes: MutableMap<Double, MutableList<MachineAction>> = mutableMapOf()
 
-    fun getAct(machineKey: String, actName: String? = null) {
+    private val timeCodes: MutableMap<Double, MutableList<Trigger>> = mutableMapOf()
 
+//    fun getAct(machineKey: String, actName: String? = null) {
+//
+//    }
+
+//    fun updateOrCreateAct(machineFunc: MachineFunc, actName: String): Act{ //TODO maybe: machine better here than machineName?
+//        val act = actions.getOrPut(actName) {
+//            Act(
+//                actName,
+//                machineFunc,
+//                machineFunc.properties.toMutableMap(),
+//                this
+//                // TODO: implement map of machine relationships to acts
+//            )
+//        }
+//        return act
+//    }
+
+    private fun createTrigger(time:Double, properties: Map<String, Any?>) {
+        val triggerList = timeCodes.getOrPut(time) {mutableListOf()}
+
+        //TODO: accommodate triggering existing act (updating it)
+        val machine = machinePalette[properties["machine"] as String] as RndrMachine<Act>
+        val trigger = Trigger(this, machine, null, time, properties)
+
+        // TODO: consider creating act here upfront (as opposed to during animation)
+        triggerList.add(trigger)
     }
 
-    fun updateOrCreateAct(machineFunc: MachineFunc, actName: String): Act{ //TODO maybe: machine better here than machineName?
-        val act = actions.getOrPut(actName) {
-            Act(
-                actName,
-                machineFunc,
-                machineFunc.properties.toMutableMap(),
-                this
-                // TODO: implement map of machine relationships to acts
-            )
-        }
-        return act
-    }
-
-    private fun createAction(time:Double, properties: Map<String, Any?>) {
-        val timeCodeList = timeCodes.getOrPut(time) {mutableListOf()}
-
-        // TODO:
-        // determine whether to create or update (or delete as an "update")
-
-        // create a new act
-        // TODO: make this less gross (all the type casting sucks)
-        // TODO maybe: move implementation to MachineFunc? (esp. if it helps with implementing map of
-        //  machine relationships to acts below)
-        val act = Act(
-            properties.getOrDefault("act", autoKey()) as String,
-            machinePalette[properties["machine"] as String] as MachineFunc, // TODO: throw warning or error if machine not found
-            properties.toMutableMap(),
-            this
-            // TODO: implement map of machine relationships to acts
-        )
-        timeCodeList.add(act)
-
-        // TODO:
-        // update an act
-    }
-
-    // TODO: test and document
-    fun createActions(pattern: CellPattern, runningTime:Double=0.0): Double {
+    // TODO: test and document ... also, should this be the public method, or should it be something else?
+    fun createTriggers(pattern: CellPattern, runningTime:Double=0.0): Double {
 
         // TODO: refactor and simplify this logic...? (also look at old python code)
         var patternDur = 0.0
         println(pattern)
         if (pattern.isLeaf) {
             // TODO maybe: handle fancy logic like hooks here?
-            pattern.veins.forEach {c
+            pattern.veins.forEach {
                 val veinDur = it["dur"] as Double
                 if (pattern.simultaneous) {
-                    createAction(runningTime, it)
+                    createTrigger(runningTime, it)
                     if (veinDur > patternDur) patternDur = veinDur
                 } else {
-                    createAction(runningTime+patternDur, it)
+                    createTrigger(runningTime+patternDur, it)
                     patternDur += veinDur
                 }
             }
@@ -81,11 +72,11 @@ class Score(
             pattern.branches.asTypedSequence<CellPattern>().forEach { branch ->
                 println("yo branch " + branch.toString())
                 if (pattern.simultaneous) {
-                    val branchEndTime = createActions(branch, runningTime)
+                    val branchEndTime = createTriggers(branch, runningTime)
                     val branchDur = branchEndTime-runningTime
                     if (branchDur > patternDur) patternDur = branchDur
                 } else {
-                    val branchEndTime = createActions(branch, runningTime+patternDur)
+                    val branchEndTime = createTriggers(branch, runningTime+patternDur)
                     patternDur = branchEndTime-runningTime
                 }
             }
@@ -94,7 +85,7 @@ class Score(
     }
 
     fun reset() {
-        actions.clear()
+        acts.clear()
         timeCodes.clear()
     }
 
@@ -106,33 +97,42 @@ class Score(
         program {
 
             launch {
-                timeCodes.keys.sorted().forEach { actionTime ->
-                    val actionList = timeCodes[actionTime]!!
-                    val delayTime = actionTime - prevTriggerTime
+                timeCodes.keys.sorted().forEach { triggerTime ->
+                    val triggerList = timeCodes[triggerTime]!!
+                    val delayTime = triggerTime - prevTriggerTime
                     if (delayTime > 0) delay((delayTime).toDuration(DurationUnit.SECONDS))
                     launch {
-                        actionList.forEach { action ->
-                            if (action is Act) {
-                                action.start()
-                                // println("starting: " + action.toString())
-                            }
-                            // TODO: implement Update actions here (inc. stopping at appropriate dur)
-//                            else {
-//                                if (p["gate"] != true) launch {
-//                                    // TODO: consider accommodating ops with indeterminate durs...
-//                                    delay((p["dur"] as Double).toDuration(DurationUnit.SECONDS))
-//                                    machine.stopOp(op)
-//                                }
+                        triggerList.forEach { tr: Trigger ->
+
+                            val act = tr.rndrMachine.actFactory(tr)
+                            acts[act.name] = act
+                            act.isRunning = true
+                            println("starting: " + act.toString())
+
+//                            if (action is Act) {
+//                                action.start()
+//                                // println("starting: " + action.toString())
 //                            }
+//                            // TODO: implement Update actions here (inc. stopping at appropriate dur)
+////                            else {
+////                                if (p["gate"] != true) launch {
+////                                    // TODO: consider accommodating ops with indeterminate durs...
+////                                    delay((p["dur"] as Double).toDuration(DurationUnit.SECONDS))
+////                                    machine.stopOp(op)
+////                                }
+////                            }
                         }
                     }
-                    prevTriggerTime = actionTime
+                    prevTriggerTime = triggerTime
                 }
             }
 
             extend {
 
-                machinePalette.context.cycleOps()
+                // TODO: need to worry about acts ordering?
+                acts.forEach { act ->
+
+                }
 
                 // DO NOTHING?
 

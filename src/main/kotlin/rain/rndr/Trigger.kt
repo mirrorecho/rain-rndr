@@ -1,9 +1,10 @@
 package rain.rndr
 
-class Trigger<T:Act>(
+// TODO: OK To not include type parameter of the Act here????
+class Trigger(
     val score: Score,
-    val rndrMachine: RndrMachine<T>,
-    val act:T? = null, // passed if triggering an existing act /// TODO: rethink????
+    val rndrMachine: RndrMachine<*>, // TODO: <*> OK here?
+    val act:Act? = null, // passed if triggering an existing act /// TODO: rethink????
     val runningTime:Double = 0.0, // TODO: used?
     val properties: Map<String, Any?>
     // TODO... the trigger is what will need to connect an Act to its related/sub acts...
@@ -16,9 +17,10 @@ class Trigger<T:Act>(
         return if (actName.isNullOrBlank()) ValueAct(value=propertyAs(propertyName)) else ValueAct(name=actName, value=propertyAs(propertyName))
     }
 
-    fun <RA:Act>relatedAct(relationshipName: String, actName: String?=null): RA {
-        return rndrMachine.getRelatedAct(relationshipName, actName)
-    }
+    // TODO: implement?
+//    fun <RA:Act>relatedAct(relationshipName: String, actName: String?=null): RA {
+//        return rndrMachine.getRelatedAct(relationshipName, actName)
+//    }
 
     fun <RA:Act>triggerRelated(relationshipName: String, actName: String?=null, properties: Map<String, Any?>): RA {
         val rMachine = rndrMachine.targetsAs<RndrMachine<RA>>(relationshipName)

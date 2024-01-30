@@ -1,6 +1,7 @@
 package rain.rndr
 
 
+import org.openrndr.Program
 import rain.interfaces.ContextInterface
 import rain.language.LocalContext
 
@@ -31,8 +32,8 @@ open class Circle(
     //  - OR collections of values (from this node's properties)
     // TODO: or maybe by lazy is not ideal here? think about it...
 
-    override fun render(score: Score) {
-        score.program.apply {
+    override fun render(score: Score, program: Program) {
+        program.apply {
             drawer.stroke = strokeColor.colorRGBa()
             drawer.strokeWeight = strokeWeight.value
             drawer.fill = fillColor?.colorRGBa()

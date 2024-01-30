@@ -22,21 +22,21 @@ open class RndrMachine<T:Act>(
 
     override val label = LocalContext.getLabel("RndrMachine", "Machine", "Leaf") { k, p, c -> RndrMachine<T>(k, p, c) }
 
-    val actFactory: (tr:Trigger<T>)->T get() = getFancyProperty< (tr:Trigger<T>)->T >("ACT_FACTORY").value
+    val actFactory: (tr:Trigger)->T get() = getFancyProperty< (tr:Trigger)->T >("ACT_FACTORY").value
 
     var single: Boolean by this.properties
 
-    fun setFactory(factory: (tr:Trigger<T>)->T) {
+    fun setFactory(factory: (tr:Trigger)->T) {
         this.setProperty("ACT_FACTORY", factory, true )
     }
 
-    fun <RT:Act>getRelatedAct(relationshipName: String, actName: String?=null): RT {
-        return this.targetsAs<RndrMachine<RT>>(relationshipName).getAct(actName)
-    }
-
-    fun getAct(actName: String?=null): T? {
-
-    }
+    // TODO: implement these?
+//    fun <RT:Act>getRelatedAct(relationshipName: String, actName: String?=null): RT? {
+//        return this.targetsAs<RndrMachine<RT>>(relationshipName).getAct(actName)
+//    }
+//    fun getAct(actName: String?=null): T? {
+//
+//    }
 
     // TODO: NOTE - no override since takes a Trigger as arg... awkward?
 //    fun trigger(runningTime:Double, properties: Map<String, Any?>) {
@@ -45,7 +45,7 @@ open class RndrMachine<T:Act>(
 
 }
 
-fun <T:Act>createRndrMachine(key:String= autoKey(),  single:Boolean=true, factory: (tr:Trigger<T>)->T): RndrMachine<T> {
+fun <T:Act>createRndrMachine(key:String= autoKey(),  single:Boolean=true, factory: (tr:Trigger)->T): RndrMachine<T> {
     return RndrMachine<T>(key).apply {
         this.single = single
         setFactory(factory)

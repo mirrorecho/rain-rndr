@@ -71,6 +71,17 @@ open class Node(
     override fun <T:LanguageNode?>targetsAs(label:String?, keys:List<String>?, properties:Map<String,Any>?): T =
         r(direction= SelectDirection.RIGHT, label=label, keys=keys, properties=properties).n().first as T
 
+    fun relate(relationshipLabel: String, targetKey:String, properties: Map<String, Any?> = mapOf()) {
+        Relationship(
+            relationshipLabel=relationshipLabel,
+            source_key = key, target_key = targetKey, properties = properties, context = context,
+        ).createMe()
+    }
+
+    fun relate(relationshipLabel: String, targetNode:Node, properties: Map<String, Any?> = mapOf()) {
+        // TODO: implement relate
+        relate(relationshipLabel, targetNode.key, properties)
+    }
 
 }
 
@@ -93,7 +104,6 @@ open class Relationship(
     override val label = LocalContext.getLabel(relationshipLabel) { k, p, c -> Relationship(k, null, null, p, c) }
 
 }
-
 
 
 
