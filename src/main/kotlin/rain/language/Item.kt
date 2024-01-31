@@ -34,7 +34,7 @@ abstract class Item(
         properties[name]?.let {
             with(it.toString()) {
                 if (this.startsWith(":FANCY:")) {
-                    return this@Item.getFancyProperty<T>(this).value
+                    return this@Item.getFancyProperty<T>(this.substringAfter(":FANCY:")).value
                 } else {
                     return it as T
                 }

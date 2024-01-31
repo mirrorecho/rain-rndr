@@ -31,7 +31,7 @@ class Trigger(
             this.runningTime,
             properties
         )
-        return rMachine.actFactory(rTrigger)
+        return rMachine.actFactory!!.invoke(rTrigger) // TODO maybe: !! OK here?
     }
 
     val dur: Double by this.properties

@@ -22,7 +22,7 @@ open class RndrMachine<T:Act>(
 
     override val label = LocalContext.getLabel("RndrMachine", "Machine", "Leaf") { k, p, c -> RndrMachine<T>(k, p, c) }
 
-    val actFactory: (tr:Trigger)->T get() = getFancyProperty< (tr:Trigger)->T >("ACT_FACTORY").value
+    val actFactory: ((tr:Trigger)->T)? get() = getProperty("ACT_FACTORY")
 
     var single: Boolean by this.properties
 

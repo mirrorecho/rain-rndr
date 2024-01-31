@@ -104,10 +104,11 @@ class Score(
                     launch {
                         triggerList.forEach { tr: Trigger ->
 
-                            val act = tr.rndrMachine.actFactory(tr)
-                            acts[act.name] = act
-                            act.isRunning = true
-                            println("starting: " + act.toString())
+                            tr.rndrMachine.actFactory?.invoke(tr)?.let { act ->
+                                acts[act.name] = act
+                                act.isRunning = true
+                                println("starting: " + act.toString())
+                            }
 
 //                            if (action is Act) {
 //                                action.start()

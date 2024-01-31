@@ -11,5 +11,4 @@ class FancyProperty<T>(
 ) {
     val graphValue: String get() = ":FANCY:$universalName"
 
-
 }

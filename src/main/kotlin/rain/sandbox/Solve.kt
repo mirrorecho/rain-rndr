@@ -78,6 +78,8 @@ fun solve1() {
 
     println("----------------------------------------------------------------------------")
 
+//    println(RndrMachine<ValueAct>("RADIUS").apply { read() }.actFactory)
+
     val rndrMachines = Palette.fromKeys<RndrMachine<Act>>(
         "X", "Y", "H", "S", "V", "A", "STROKE_WEIGHT", "RADIUS",
         "POSITION_1", "COLOR_1", "CIRCLE_1"
@@ -90,6 +92,8 @@ fun solve1() {
     val score = Score(rndrMachines)
     score.createTriggers(c1)
     score.play()
+
+    println("YO MAMA")
 
 }
 
